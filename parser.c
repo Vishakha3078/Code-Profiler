@@ -89,6 +89,7 @@ void create_tree(Token **tokens,int *token_num,Node **ptr,int ptrsize){
                 create_tree(tokens,token_num,ptr[ptrsize] -> ptr[1] -> ptr,ptr[ptrsize] -> ptr[1] -> ptrsize);
             }
             else{
+      printf("%s\n",tokens[*token_num] -> value);
                 ptr[ptrsize] -> ptr[1] -> ptr[0] = createnode(tokens[*token_num]);
                 ptr[ptrsize] -> ptr[1] -> ptrsize = 1;
                 *token_num = *token_num + 1;
@@ -97,9 +98,11 @@ void create_tree(Token **tokens,int *token_num,Node **ptr,int ptrsize){
             ptr = realloc(ptr,sizeof(Node*)*(ptrsize + 1));
         }
     }
+    printf("%d\n",*token_num); 
+    printf("var = %s\n", tokens[*token_num] -> value);
     *token_num = *token_num + 1;
+   printf("%s\n",tokens[*token_num] -> value);
 }
-
 
 parseroutput* parser(Token **tokens){
     int token_num = 0;
@@ -133,21 +136,23 @@ parseroutput* parser(Token **tokens){
                 token_num += 2;
             }
             else{
+      printf("%s\n",tokens[token_num] -> value);
                 array_func[func_index] = specialnode(tokens,&token_num);
                 token_num = token_num + 1;
+                create_tree(tokens,&token_num,array_func[func_index] -> ptr[1] -> ptr,array_func[func_index] -> ptr[1] -> ptrsize);
                 func_index = func_index + 1;
-                array_func = realloc(array_func,sizeof(Node)*func_index);
-                create_tree(tokens,&token_num,array_func[func_index] -> ptr[1] -> ptr,array_func[0] -> ptr[1] -> ptrsize);
+                array_func = realloc(array_func,sizeof(Node*)*func_index);
             }
         }
         else{
             root = specialnode(tokens,&token_num);
             token_num = token_num + 1;
             create_tree(tokens,&token_num,root -> ptr[1] -> ptr,root -> ptr[1] -> ptrsize);
-      printf("%p\n",root);
-      printtree(root);
         }
+      printf("%s\n",tokens[token_num] -> value);
     }
+      if(tokens[token_num] -> type == END)
+      printf("true\n");
     printtree(root);
     output->extras = extras;
     output->extra_size = extra_size;

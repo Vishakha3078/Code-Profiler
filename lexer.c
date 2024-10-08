@@ -270,12 +270,13 @@ Token **lexer(FILE *fp){
           }
         }
     }  
-    tokens[token_index] = malloc(sizeof(Token*));
-    tokens[token_index]->type = END;
-    tokens[token_index]->value = malloc(sizeof(char)*20);
-    tokens[token_index]->value = '\0';
-    for(int i = 0; tokens[i]->type != END; i++)
-       printtokens(tokens[i]);
-   printf("%p\n",tokens);
+    Token *newtype= malloc(sizeof(Token*));
+    newtype ->type = END;
+    newtype ->value = "\0";
+    tokens[token_index] = newtype;
+
+//    for(int i = 0; tokens[i]->type != END; i++)
+  //     printtokens(tokens[i]);
+   //printf("%p\n",tokens);
     return tokens;
 }
