@@ -1,10 +1,8 @@
 #include"prof.h"
 
 void printtree(Node *root){
-  printf("root = %p\n", root);
-    printf("%s",root -> value);
+    printf("%s\n",root -> value);
     for(int i = 0; i < root -> ptrsize; i++){
-        printf(" %p ", root -> ptr[i]);
         printtree(root -> ptr[i]);
     }
     return;
@@ -33,7 +31,6 @@ Node *createcountnode(){
 
 Node *createnode_else(Token *token){
     Node *newnode = malloc(sizeof(Node));
-      printf("%s\n",token -> value);
     newnode -> type = token -> type;
     newnode -> value = token -> value;
     newnode -> ptr = malloc(sizeof(Node*));
@@ -57,51 +54,46 @@ Node *specialnode(Token **tokens,int *token_num){
 }
 
 
-void create_tree(Token **tokens,int *token_num,Node **ptr,int ptrsize){
+void create_tree(Token **tokens,int *token_num,Node *root,Node **ptr,int *ptrsize){
     while(tokens[*token_num]->type != CURLY){
         if(tokens[*token_num]->type == STATEMENT || tokens[*token_num]->type == FUNCTION || tokens[*token_num]->type == FUNC_CALL){
-      printf("%s\n",tokens[*token_num] -> value);
-            ptr[ptrsize] = createnode(tokens[*token_num]);
-            ptrsize++;
+            ptr[*ptrsize] = createnode(tokens[*token_num]);
+            *ptrsize = *ptrsize+1;
             *token_num = *token_num + 1;
-            ptr = realloc(ptr,sizeof(Node*)*(ptrsize + 1));
+            ptr = realloc(ptr,sizeof(Node*)*(*ptrsize + 1));
         }   
         else if(!strcmp(tokens[*token_num]-> value,"else")){
-            ptr[ptrsize]= createnode_else(tokens[*token_num]);
+            ptr[*ptrsize]= createnode_else(tokens[*token_num]);
             *token_num = *token_num + 1;
             if(tokens[*token_num]->type == CURLY ){
                 *token_num = *token_num + 1;
-                create_tree(tokens,token_num,ptr[ptrsize] -> ptr[0] -> ptr,ptr[ptrsize] -> ptr[0] -> ptrsize);
+                create_tree(tokens,token_num,ptr[*ptrsize]->ptr[0],ptr[*ptrsize] -> ptr[0] -> ptr,&(ptr[*ptrsize] -> ptr[0] -> ptrsize));
             }
             else{
-                ptr[ptrsize] -> ptr[0] -> ptr[0] = createnode(tokens[*token_num]);
-                ptr[ptrsize] -> ptr[0] -> ptrsize = 1;
+                ptr[*ptrsize] -> ptr[0] -> ptr[0] = createnode(tokens[*token_num]);
+                ptr[*ptrsize] -> ptr[0] -> ptrsize = 1;
                 *token_num = *token_num + 1;
             }
-            ptrsize++;
-            ptr = realloc(ptr,sizeof(Node*)*(ptrsize + 1));
+            *ptrsize = *ptrsize + 1;
+            ptr = realloc(ptr,sizeof(Node*)*(*ptrsize + 1));
         }
         else if(tokens[*token_num]->type == LOOP || tokens[*token_num]->type == CONDITIONAL_STATEMENT ){
-      printf("%s\n",tokens[*token_num] -> value);
-            ptr[ptrsize] = specialnode(tokens,token_num);
+            ptr[*ptrsize] = specialnode(tokens,token_num);
             if(tokens[*token_num]->type == CURLY ){
                 *token_num = *token_num + 1;
-                create_tree(tokens,token_num,ptr[ptrsize] -> ptr[1] -> ptr,ptr[ptrsize] -> ptr[1] -> ptrsize);
+                create_tree(tokens,token_num,ptr[*ptrsize]->ptr[1],ptr[*ptrsize] -> ptr[1] -> ptr,&(ptr[*ptrsize] -> ptr[1] -> ptrsize));
             }
             else{
-      printf("%s\n",tokens[*token_num] -> value);
-                ptr[ptrsize] -> ptr[1] -> ptr[0] = createnode(tokens[*token_num]);
-                ptr[ptrsize] -> ptr[1] -> ptrsize = 1;
+                ptr[*ptrsize] -> ptr[1] -> ptr[0] = createnode(tokens[*token_num]);
+                ptr[*ptrsize] -> ptr[1] -> ptrsize = 1;
                 *token_num = *token_num + 1;
             }
-            ptrsize++;
-            ptr = realloc(ptr,sizeof(Node*)*(ptrsize + 1));
+            *ptrsize = *ptrsize + 1;
+            ptr = realloc(ptr,sizeof(Node*)*(*ptrsize + 1));
         }
     }
-    printf("%d\n",*token_num); 
-    printf("var = %s\n", tokens[*token_num] -> value);
+    root -> ptr = ptr;
     *token_num = *token_num + 1;
-   printf("%s\n",tokens[*token_num] -> value);
 }
 
 parseroutput* parser(Token **tokens){
@@ -117,7 +109,6 @@ parseroutput* parser(Token **tokens){
         if(tokens[token_num]->type == HEADER){
             extras[extra_size].type = tokens[token_num]->type;
             extras[extra_size].value = tokens[token_num]->value;
-        printf("%s\n",extras[extra_size].value);
             extra_size += 1;
             token_num++;
             extras = realloc(extras,sizeof(Token)*(extra_size + 1));
@@ -126,20 +117,17 @@ parseroutput* parser(Token **tokens){
             if(tokens[token_num+1]->type == FUNC_CALL){
                 extras[extra_size].type = tokens[token_num]->type;
                 extras[extra_size].value = tokens[token_num]->value;
-        printf("%s\n",extras[extra_size].value);
                 extra_size++;
                 extras = realloc(extras,sizeof(Token)*(extra_size+2));
                 extras[extra_size].type = tokens[token_num+1]->type;
                 extras[extra_size].value = tokens[token_num+1]->value;
-        printf("%s\n",extras[extra_size].value);
                 extra_size++;   
                 token_num += 2;
             }
             else{
-      printf("%s\n",tokens[token_num] -> value);
                 array_func[func_index] = specialnode(tokens,&token_num);
                 token_num = token_num + 1;
-                create_tree(tokens,&token_num,array_func[func_index] -> ptr[1] -> ptr,array_func[func_index] -> ptr[1] -> ptrsize);
+                create_tree(tokens,&token_num,array_func[func_index]->ptr[1],array_func[func_index] -> ptr[1] -> ptr,&(array_func[func_index] -> ptr[1] -> ptrsize));
                 func_index = func_index + 1;
                 array_func = realloc(array_func,sizeof(Node*)*func_index);
             }
@@ -147,12 +135,10 @@ parseroutput* parser(Token **tokens){
         else{
             root = specialnode(tokens,&token_num);
             token_num = token_num + 1;
-            create_tree(tokens,&token_num,root -> ptr[1] -> ptr,root -> ptr[1] -> ptrsize);
+            create_tree(tokens,&token_num,root->ptr[1],root -> ptr[1] -> ptr,&(root -> ptr[1] -> ptrsize));
         }
-      printf("%s\n",tokens[token_num] -> value);
     }
       if(tokens[token_num] -> type == END)
-      printf("true\n");
     printtree(root);
     output->extras = extras;
     output->extra_size = extra_size;
