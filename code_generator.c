@@ -1,5 +1,4 @@
 #include"prof.h"
-
 FILE *fp;
 char* curr_func_name;
 int if_else_index = 0;
@@ -103,7 +102,6 @@ char* give_alloc(char* a,int count){
     char* cnt = my_strcat(a,my_strcat(my_strcat("_cnt = makelist(",tmp),buf));
     return cnt;
 }
-
 
 void addnewline(){
     char *newline = "\n";
