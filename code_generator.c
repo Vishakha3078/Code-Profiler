@@ -229,6 +229,7 @@ int write_func(Node *root){
     str = "}\n";
     fwrite(str,sizeof(char),2,fp); 
     return tot_index;
+    free(st);
 }
     
 void code_generator(parseroutput* output){
