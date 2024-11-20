@@ -10,7 +10,7 @@ int main(){
 foo(j);
   while (j != 0){
     j--;
-  }
+    }
     if(j < k){
         j = k;
     }

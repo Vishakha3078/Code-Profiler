@@ -7,6 +7,6 @@ FILE *fp = fopen("test.c","r");
   //  printf("%s\n",tokens[0].value);
 //    printf("done\n");
     //printf("%p\n",tokens);
-parser(lexer(fp));
+    code_generator(parser(lexer(fp)));
     return 0;
 }

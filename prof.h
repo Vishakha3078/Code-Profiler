@@ -2,7 +2,7 @@
 #include"stdlib.h"
 #include"string.h"
 #include"ctype.h"
-#include<stdbool.h>
+#include"stdbool.h"
 
 typedef enum{
     START,
@@ -34,8 +34,11 @@ typedef struct parseoutput{
     int extra_size;
     Node **array_func;
     int func_index;
-    Node *root;
 }parseroutput;
+
 
 Token **lexer(FILE *fp);
 parseroutput *parser(Token **tokens);
+void printtree(Node *root);
+void code_generator(parseroutput* output);
+int givecount(Node *root);

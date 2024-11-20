@@ -275,8 +275,8 @@ Token **lexer(FILE *fp){
     newtype ->value = "\0";
     tokens[token_index] = newtype;
 
-//    for(int i = 0; tokens[i]->type != END; i++)
-  //     printtokens(tokens[i]);
+   for(int i = 0; tokens[i]->type != END; i++)
+       printtokens(tokens[i]);
    //printf("%p\n",tokens);
     return tokens;
 }
