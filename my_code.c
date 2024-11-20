@@ -53,9 +53,9 @@ temporary_listhead = temporary_listhead -> right;
 while(j < i){
 temporary_listhead -> val++;
 printf("sdfsgsd");
+j++;
 }
 temporary_listhead = temporary_listhead -> left;
-j++;
 }
 void moo(int i){
 temporary_listhead = moo_cnt;
@@ -65,7 +65,7 @@ temporary_listhead = temporary_listhead -> right;
 while(j < i){
 temporary_listhead -> val++;
 printf("sdfsgsd");
+j++;
 }
 temporary_listhead = temporary_listhead -> left;
-j++;
 }

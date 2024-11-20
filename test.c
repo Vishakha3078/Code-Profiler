@@ -27,16 +27,18 @@ foo(j);
 
 void foo(int i){
     int j = 0;
-    while(j < i)
+    while(j < i){
        printf("sdfsgsd");
-    j++;
+        j++;
+    }
 }
 
 void moo(int i){
     int j = 0;
-    while(j < i)
+    while(j < i){
        printf("sdfsgsd");
-    j++;
+        j++;
+    }
 }
 
 

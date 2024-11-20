@@ -28,12 +28,6 @@ void push(stk *st,int val){
     return;
 }
 
-typedef struct ListNode{
-    struct ListNode *left;
-    struct ListNode *right;
-    unsigned int val;
-}ListNode;
-
 ListNode* makeNode(){
     ListNode* nd = (ListNode*)malloc(sizeof(ListNode));
     nd -> left = NULL;
