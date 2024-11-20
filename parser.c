@@ -20,9 +20,8 @@ int givecount(Node *root){
 
 void printtree(Node *root){
     printf("%s\n",root -> value);
-    for(int i = 0; i < root -> ptrsize; i++){
+    for(int i = 0; i < root -> ptrsize; i++)
         printtree(root -> ptr[i]);
-    }
     return;
 }
 
@@ -38,8 +37,7 @@ Node *createnode(Token *token){
 Node *createcountnode(){
     Node *newnode = malloc(sizeof(Node));
     newnode -> type = COUNT;
-    newnode -> value ="cnt++";// array[count_index]
-    //count_index++;
+    newnode -> value ="cnt++";
     newnode -> ptr = malloc(sizeof(Node*));
     newnode -> ptrsize = 0;
     return newnode;
@@ -139,18 +137,16 @@ parseroutput* parser(Token **tokens){
             }
         }
    }
-    for (int i = 0; i < extra_size; i++)
+  /*  for (int i = 0; i < extra_size; i++)
         printf("%s\n",extras[i].value);
-    printf("i am here\n");
     for (int i = 0; i < func_index; i++){
         printtree(array_func[i]);
         printf("here count\n");
         printf("%d\n",givecount(array_func[i]));
-    }
+    }*/
     output->extras = extras;
     output->extra_size = extra_size;
     output->array_func = array_func;
     output->func_index = func_index;
- //       printf("addr: %p\n",output);
     return output;
 }

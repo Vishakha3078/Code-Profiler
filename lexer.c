@@ -3,9 +3,8 @@
 void printtokens(Token *token){
     printf("TOKEN VALUE : ");
     printf("'");
-    for(int i = 0; token->value[i] != '\0'; i++){
+    for(int i = 0; token->value[i] != '\0'; i++)
         printf("%c",token->value[i]);
-    }
     printf("'");
     switch(token->type){
         case STATEMENT:
@@ -36,9 +35,8 @@ void printtokens(Token *token){
 }
 
 void filterextras(char *current,int *index){
-    while(current[*index] == 9 || current[*index] == 32 || current[*index] == '\n'){
+    while(current[*index] == 9 || current[*index] == 32 || current[*index] == '\n')
         *index = *index + 1;
-    }
     return;
 }
 
@@ -52,9 +50,8 @@ bool next_two_char(char *current,int *index){
         newsize++;
     }
     newtype[newsize] = '\0';
-    if(strcmp(newtype,"if")){
+    if(strcmp(newtype,"if"))
         return 0;
-    }
     else{
         if (temp != *index)
             *index = temp;
@@ -185,9 +182,8 @@ Token *check_type(char *current,int *index,int length,bool *flag){
                     newtype = realloc(newtype,sizeof(char)*(newsize+1));
                 *index = val + 1;
             }
-            else{
+            else
                 *index = val;
-            }
         }
                 
         while(current[*index] != ';' && current[*index] != '('){
@@ -265,9 +261,6 @@ Token **lexer(FILE *fp){
         if (token_index >= token_number){
             token_number += 20;
             tokens = realloc(tokens,sizeof(Token*)*token_number);
-            if(tokens == NULL){
-          exit(0);
-          }
         }
     }  
     Token *newtype= malloc(sizeof(Token*));
@@ -275,8 +268,7 @@ Token **lexer(FILE *fp){
     newtype ->value = "\0";
     tokens[token_index] = newtype;
 
-   for(int i = 0; tokens[i]->type != END; i++)
-       printtokens(tokens[i]);
-   //printf("%p\n",tokens);
+  // for(int i = 0; tokens[i]->type != END; i++)
+    //   printtokens(tokens[i]);
     return tokens;
 }

@@ -105,18 +105,6 @@ void addnewline(){
     return;
 }
 
-void startbrac(){
-    char *brac = "{\n";
-    fwrite(brac,sizeof(char),2,fp); 
-    return;
-}
-
-void endbrac(){
-    char *brac = "}\n";
-    fwrite(brac,sizeof(char),2,fp); 
-    return;
-}
-
 void addcount(){
     char *str = "temporary_listhead -> val++;\n";
     len = strlen(str);
@@ -126,35 +114,34 @@ void addcount(){
 
 void alloc_all_lists(){
     for(int i= 0; i < given_func -> func_index; i++){
-        char *str = give_alloc(given_func -> array_func[i] ->value,givecount(given_func->array_func[i]));
+        char *str = give_alloc(given_func->array_func[i]->value,givecount(given_func->array_func[i]));
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
     }
     return;
 }
 
-void write_func(Node *root){
-    printf("i am in func\n");
-    stk *st;
+int write_func(Node *root){
+    stk *st = malloc(sizeof(stk));
+    st -> arr = (int*)malloc(sizeof(int)*st-> size);
     st -> size = 10;
     st -> top = -1;
-    st -> arr = (int*)malloc(sizeof(int)*st-> size);
     int i = 0;
     char *str;
     int backward;
     int tot_index = 0;
     len = strlen(root -> value);
-    fwrite(root ->value,sizeof(char),len,fp);
-    if(root -> value != "else"){
+    fwrite(root -> value,sizeof(char),len,fp);
+    if(strcmp(root -> value,"else")){
         len = strlen(root -> ptr[0] -> value);
         fwrite(root -> ptr[0]->value,sizeof(char),len,fp);
         i = 1;
     }
-    startbrac();
+    str = "{\n";
+    fwrite(str,sizeof(char),2,fp); 
 
-    if(root -> type == LOOP){
+    if(root -> type == LOOP)
         addcount();
-    }
     else if(root -> type == CONDITIONAL_STATEMENT){
         if_else_index++;
         backward = if_else_index;
@@ -175,7 +162,7 @@ void write_func(Node *root){
     }
     
     for(int j = 0; j < root -> ptr[i] -> ptrsize;j++){
-     printf("%s\n",root->ptr[i]->ptr[j]->value); 
+    printf("%s\n",root->ptr[i]->ptr[j]->value); 
         if(root -> ptr[i] -> ptr[j] -> type != CONDITIONAL_STATEMENT)
             flag = 0;
         if(root -> ptr[i] -> ptr[j] -> type == STATEMENT){
@@ -201,15 +188,13 @@ void write_func(Node *root){
                 push(st,tot_index+1);
             }
             else{
-                printf("i am here\n");
                 str = "temporary_listhead = temporary_listhead -> right;\n";
                 len = strlen(str);
                 fwrite(str,sizeof(char),len,fp);
                 push(st,1);
             }
             tot_index++;
-            write_func(root -> ptr[i] -> ptr[j]);
-    printf("i am here\n");
+            tot_index += write_func(root -> ptr[i] -> ptr[j]);
             int val = pop(st);
             if(val == 1){
                 str = "temporary_listhead = temporary_listhead -> left;\n";
@@ -227,12 +212,11 @@ void write_func(Node *root){
         else{
             if(flag != 1 && st -> top != -1)
                 if_else_index = 0;
-            else{
+            else
                 if_else_index = tot_index;
-            }
             flag = 1;
             tot_index++;
-            write_func(root -> ptr[i] -> ptr[j]);    
+            tot_index += write_func(root -> ptr[i] -> ptr[j]);    
         }
     }
     if(root -> type == CONDITIONAL_STATEMENT){
@@ -241,9 +225,10 @@ void write_func(Node *root){
         str = my_strcat(my_strcat("temporary_listhead = traverseprev(",tmp),",temporary_listhead);\n");
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
-        addcount();    
     }
-    endbrac();
+    str = "}\n";
+    fwrite(str,sizeof(char),2,fp); 
+    return tot_index;
 }
     
 void code_generator(parseroutput* output){
@@ -253,6 +238,12 @@ void code_generator(parseroutput* output){
     len = strlen(str);
     fwrite(str,sizeof(char),len,fp);
     for(int i = 0; i < output -> extra_size; i++){
+        if(output -> extras[i].type == FUNCTION){
+            str = my_strcat(output->extras[i].value,output->extras[i+1].value);
+            len = strlen(str);
+            fwrite(str,sizeof(char),len,fp);
+            i++;
+        }
         len = strlen(output-> extras[i].value);
         fwrite(output->extras[i].value,sizeof(char),len,fp);
         addnewline();
@@ -269,9 +260,7 @@ void code_generator(parseroutput* output){
        
     for(int i = 0; i < output -> func_index; i++){
         curr_func_name = my_strcat(output -> array_func[i] -> value,"_cnt");
-    printf("%s\n",curr_func_name);
         write_func(output -> array_func[i]);
     }    
-    printf("in here\n");
     return;
 }
