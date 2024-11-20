@@ -1,17 +1,17 @@
 #include<prof.h>
 #include<stdio.h>
 #include<stdlib.h>
-void foo(int i);(int i);
-void moo(int i);(int i);
-ListNode* int main_cnt;
-ListNode* void foo_cnt;
-ListNode* void moo_cnt;
+void foo(int i);
+void moo(int i);
+ListNode* main_cnt;
+ListNode* foo_cnt;
+ListNode* moo_cnt;
 ListNode *temporary_listhead;
 int main(){
-int main_cnt = makelist(5);
-void foo_cnt = makelist(2);
-void moo_cnt = makelist(2);
-temporary_listhead = int main_cnt;
+main_cnt = makelist(5);
+foo_cnt = makelist(2);
+moo_cnt = makelist(2);
+temporary_listhead = main_cnt;
 temporary_listhead -> val++;
 int i,j,k;
 j = 2;
@@ -46,7 +46,7 @@ moo(i);
 return 0;
 }
 void foo(int i){
-temporary_listhead = void foo_cnt;
+temporary_listhead = foo_cnt;
 temporary_listhead -> val++;
 int j = 0;
 temporary_listhead = temporary_listhead -> right;
@@ -58,7 +58,7 @@ temporary_listhead = temporary_listhead -> left;
 j++;
 }
 void moo(int i){
-temporary_listhead = void moo_cnt;
+temporary_listhead = moo_cnt;
 temporary_listhead -> val++;
 int j = 0;
 temporary_listhead = temporary_listhead -> right;

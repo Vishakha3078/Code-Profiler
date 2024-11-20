@@ -86,6 +86,18 @@ char* my_strcat(char* s1,char* s2){
     return out;
 }
 
+char* remove_return_type(char *s){
+    int len = strlen(s);
+    int i = len - 1;
+    int j = 0;
+    while(*(s+i) != ' '){
+        i--;
+        j++;
+    }
+    char *str = &s[len-j];
+    return str;
+}
+
 char* give_declaration(char* a){
     return my_strcat(my_strcat("ListNode* ",a),"_cnt;\n");
 }
@@ -114,7 +126,7 @@ void addcount(){
 
 void alloc_all_lists(){
     for(int i= 0; i < given_func -> func_index; i++){
-        char *str = give_alloc(given_func->array_func[i]->value,givecount(given_func->array_func[i]));
+        char *str = give_alloc(remove_return_type(given_func->array_func[i]->value),givecount(given_func->array_func[i]));
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
     }
@@ -245,13 +257,15 @@ void code_generator(parseroutput* output){
             fwrite(str,sizeof(char),len,fp);
             i++;
         }
-        len = strlen(output-> extras[i].value);
-        fwrite(output->extras[i].value,sizeof(char),len,fp);
+        else{
+            len = strlen(output-> extras[i].value);
+            fwrite(output->extras[i].value,sizeof(char),len,fp);
+        }
         addnewline();
     }
 
     for(int i = 0; i < output -> func_index ;i++){
-        str = give_declaration(output -> array_func[i]-> value);
+        str = give_declaration(remove_return_type(output -> array_func[i]-> value));
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
     }
@@ -260,7 +274,7 @@ void code_generator(parseroutput* output){
     fwrite(str,sizeof(char),len,fp);
        
     for(int i = 0; i < output -> func_index; i++){
-        curr_func_name = my_strcat(output -> array_func[i] -> value,"_cnt");
+        curr_func_name = my_strcat(remove_return_type(output -> array_func[i] -> value),"_cnt");
         write_func(output -> array_func[i]);
     }    
     return;
