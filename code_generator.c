@@ -1,31 +1,12 @@
 #include"prof.h"
+
 FILE *fp;
 char* curr_func_name;
+char* print_func_name;
 int if_else_index = 0;
 int len;
 bool flag = 0;
 parseroutput *given_func;
-
-typedef struct stack{
-    int size;
-    int top;
-    int *arr;
-}stk;
-
-int pop(stk *st){
-    st -> top = (st -> top) - 1;
-    return st -> arr[(st -> top) + 1];
-}
-
-void push(stk *st,int val){
-    if((st -> top)+1 == st -> size){
-        st -> size = (st -> size) + 10;
-        st = realloc(st, sizeof(int)*st ->size);
-    }
-    st -> top = st -> top + 1;
-    st -> arr[st -> top] = val;
-    return;
-}
 
 ListNode* makeNode(){
     ListNode* nd = (ListNode*)malloc(sizeof(ListNode));
@@ -125,6 +106,113 @@ void alloc_all_lists(){
     return;
 }
 
+void function_count(Node *root){
+    char *tabs = "    ";
+    char c = (char)92;
+    char n = 'n';
+    char quotes = (char)34;
+    char *str;
+    int j = 1;
+    str = "printf(";
+    len = strlen(str);
+    fwrite(str,sizeof(char),len,fp);    
+    fwrite(&quotes,sizeof(char),1,fp);
+    if(strcmp(root -> value,"else")){
+        str =my_strcat(tabs,my_strcat(my_strcat(root -> value ,root -> ptr[0] -> value),"{")); 
+    }
+    else{
+        str =my_strcat(tabs,my_strcat(root -> value ,"{"));
+        j =0;
+    }
+    len = strlen(str);
+    fwrite(str,sizeof(char),len,fp);
+    if(root -> type == START || root -> type == FUNCTION){
+        fwrite(&c,sizeof(char),1,fp);
+        fwrite(&n,sizeof(char),1,fp);
+        str = ");\n"; 
+    }
+    else{
+        str = " -> %d";
+        len = strlen(str);
+        fwrite(str,sizeof(char),len,fp);
+        fwrite(&c,sizeof(char),1,fp);
+        fwrite(&n,sizeof(char),1,fp);
+        fwrite(&quotes,sizeof(char),1,fp);
+        str = ",temporary_listhead->val + 1);\n";
+    }
+    len = strlen(str);
+    fwrite(str,sizeof(char),len,fp);
+    str = "push(s,temporary_listhead->val);\n"; 
+    len = strlen(str);
+    fwrite(str,sizeof(char),len,fp);
+      
+    for(int i = 0; i < root -> ptr[j] -> ptrsize; i++){
+    printf("%s\n",root->ptr[j]->ptr[i]->value);
+        if(root->ptr[j]->ptr[i]->type == STATEMENT || root->ptr[j]->ptr[i]->type == FUNCTION){
+            str = "printf(";
+            len = strlen(str);
+            fwrite(str,sizeof(char),len,fp);    
+            fwrite(&quotes,sizeof(char),1,fp);
+            
+            if(root->ptr[j]->ptr[i]->type == FUNCTION){
+                str = my_strcat(my_strcat(my_strcat(tabs,root -> ptr[j]-> ptr[i] -> value),root -> ptr[j]->ptr[i+1]->value)," -> %d"); 
+                i++;
+            }
+            else
+                str = my_strcat(my_strcat(tabs,root -> ptr[j]-> ptr[i] -> value)," -> %d"); 
+            
+            len = strlen(str);
+            fwrite(str,sizeof(char),len,fp);
+            fwrite(&c,sizeof(char),1,fp);
+            fwrite(&n,sizeof(char),1,fp);
+            fwrite(&quotes,sizeof(char),1,fp);
+            str = ",s ->arr[s->top]);\n";
+            len = strlen(str);
+            fwrite(str,sizeof(char),len,fp);
+        }
+       else {
+            str = "temporary_listhead = temporary_listhead->right;\n"; 
+            len = strlen(str);
+            fwrite(str,sizeof(char),len,fp);
+            function_count(root ->ptr[j] -> ptr[i]);
+        }
+    }
+    str = "printf(";
+    len = strlen(str);
+    fwrite(str,sizeof(char),len,fp);    
+    fwrite(&quotes,sizeof(char),1,fp);
+    str = my_strcat(tabs,"}");
+    len = strlen(str);
+    fwrite(str,sizeof(char),len,fp);
+    fwrite(&c,sizeof(char),1,fp);
+    fwrite(&n,sizeof(char),1,fp);
+    fwrite(&quotes,sizeof(char),1,fp);
+    str =");\n";
+    len = strlen(str);
+    fwrite(str,sizeof(char),len,fp);
+    str = "pop(s);\n"; 
+    len = strlen(str);
+    fwrite(str,sizeof(char),len,fp);
+    return;
+}
+
+void printcounts(){
+    char *str = "stk *s = malloc(sizeof(stk));\ns -> arr = (int*)malloc(sizeof(int)*s-> size);\ns -> size = 10;\ns -> top = -1;\n";
+    len = strlen(str);
+    fwrite(str,sizeof(char),len,fp);    
+    for(int i = 0; i < given_func -> func_index; i++){
+        print_func_name = my_strcat(remove_return_type(given_func->array_func[i]->value),"_cnt");
+        str = my_strcat(my_strcat("temporary_listhead = ",print_func_name),";\n"); 
+        len = strlen(str);
+        fwrite(str,sizeof(char),len,fp);
+        function_count(given_func->array_func[i]);      
+    }    
+    str = "free(s);\n"; 
+    len = strlen(str);
+    fwrite(str,sizeof(char),len,fp);
+    return ;
+}
+
 int write_func(Node *root){
     stk *st = malloc(sizeof(stk));
     st -> arr = (int*)malloc(sizeof(int)*st-> size);
@@ -166,7 +254,8 @@ int write_func(Node *root){
     }
     
     for(int j = 0; j < root -> ptr[i] -> ptrsize;j++){
-    printf("%s\n",root->ptr[i]->ptr[j]->value); 
+        if(root -> type == START && j == (root ->  ptr[i] -> ptrsize) -1)
+            printcounts();
         if(root -> ptr[i] -> ptr[j] -> type != CONDITIONAL_STATEMENT)
             flag = 0;
         if(root -> ptr[i] -> ptr[j] -> type == STATEMENT){
@@ -268,6 +357,8 @@ void code_generator(parseroutput* output){
     for(int i = 0; i < output -> func_index; i++){
         curr_func_name = my_strcat(remove_return_type(output -> array_func[i] -> value),"_cnt");
         write_func(output -> array_func[i]);
-    }    
+    }
+    fclose(fp);
     return;
 }
+

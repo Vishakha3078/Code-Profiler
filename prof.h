@@ -42,6 +42,26 @@ typedef struct ListNode{
     unsigned int val;
 }ListNode;
 
+typedef struct stack{
+    int size;
+    int top;
+    int *arr;
+}stk;
+
+int pop(stk *st){
+    st -> top = (st -> top) - 1;
+    return st -> arr[(st -> top) + 1];
+}
+
+void push(stk *st,int val){
+    if((st -> top)+1 == st -> size){
+        st -> size = (st -> size) + 10;
+        st = realloc(st, sizeof(int)*st ->size);
+    }
+    st -> top = st -> top + 1;
+    st -> arr[st -> top] = val;
+    return;
+}
 
 Token **lexer(FILE *fp);
 parseroutput *parser(Token **tokens);
