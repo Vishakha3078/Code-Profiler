@@ -232,16 +232,16 @@ Token *check_type(char *current,int *index,int length,bool *flag){
 }
 
 
-Token **lexer(FILE *f){
+Token **lexer(FILE *fp){
     int token_number= 20;//size of token array
     int index = 0;//index of cuirrent array
     bool flag = 0; 
-    fseek(f,0,SEEK_END);
-    int length = ftell(f);
-    fseek(f,0,SEEK_SET);
+    fseek(fp,0,SEEK_END);
+    int length = ftell(fp);
+    fseek(fp,0,SEEK_SET);
     char *current = malloc(sizeof(char)*length);
-    fread(current,1,length,f);
-    fclose(f);
+    fread(current,1,length,fp);
+    fclose(fp);
     Token **tokens = malloc(sizeof(Token*) * token_number);
     int token_index = 0;//current token
 

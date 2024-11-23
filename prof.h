@@ -47,30 +47,8 @@ typedef struct stack{
     int *arr;
 }stk;
 
-int pop(stk *st){
-    st -> top = (st -> top) - 1;
-    return st -> arr[(st -> top) + 1];
-}
-
-void push(stk *st,int val){
-    if((st -> top)+1 == st -> size){
-        st -> size = (st -> size) + 10;
-        st = realloc(st, sizeof(int)*st ->size);
-    }
-    st -> top = st -> top + 1;
-    st -> arr[st -> top] = val;
-    return;
-}
-
-FILE *fp;
 Token **lexer(FILE *fp);
 parseroutput *parser(Token **tokens);
 void printtree(Node *root);
 void code_generator(parseroutput* output);
 int givecount(Node *root);
-ListNode *makeNode();
-ListNode *makeNext(ListNode *nd);
-ListNode *makelist(int n);
-char* my_strcat(char *s1,char *s2);
-char *remove_return_type(char *s);
-void printcounts(parseroutput* output);
