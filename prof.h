@@ -47,8 +47,22 @@ typedef struct stack{
     int *arr;
 }stk;
 
+typedef struct liststack{
+    int size;
+    int top;
+    ListNode **arr;
+}liststk;
+
+
 Token **lexer(FILE *fp);
 parseroutput *parser(Token **tokens);
 void printtree(Node *root);
 void code_generator(parseroutput* output);
 int givecount(Node *root);
+ListNode *makeNode();
+ListNode *makeNext(ListNode *nd);
+ListNode *makelist(int n);
+int pop(stk *s);
+void push(stk *s,int val);
+ListNode* listpop(liststk *s);
+void listpush(liststk *s,ListNode *nd);

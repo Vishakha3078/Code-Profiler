@@ -28,7 +28,6 @@ foo(j);
 void foo(int i){
     int j = 0;
     while(j < i){
-       printf("sdfsgsd");
         j++;
     }
 }
@@ -36,7 +35,6 @@ void foo(int i){
 void moo(int i){
     int j = 0;
     while(j < i){
-       printf("sdfsgsd");
         j++;
     }
 }

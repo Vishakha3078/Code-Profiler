@@ -19,6 +19,21 @@ void push(stk *st,int val){
     return;
 }
 
+ListNode* listpop(liststk *st){
+    st -> top = (st -> top) - 1;
+    return st -> arr[(st -> top) + 1];
+}
+
+void listpush(liststk *st,ListNode *p){
+    if((st -> top)+1 == st -> size){
+        st -> size = (st -> size) + 10;
+        st = realloc(st, sizeof(ListNode*)*st ->size);
+    }
+    st -> top = st -> top + 1;
+    st -> arr[st -> top] = p;
+    return;
+}
+
 ListNode* makeNode(){
     ListNode* nd = (ListNode*)malloc(sizeof(ListNode));
     nd -> next = NULL;
@@ -227,7 +242,7 @@ void write_func(Node *root){
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
         addcount();
-        str = "stk *st = malloc(sizeof(stk));\nst -> size = 10;\nst -> top = -1;\nst -> arr = (ListNode**)malloc(sizeof(ListNode*)*st-> size);\n";
+        str = "liststk *st = malloc(sizeof(liststk));\nst -> size = 10;\nst -> top = -1;\nst -> arr = (ListNode**)malloc(sizeof(ListNode*)*st-> size);\n";
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);    
     }
@@ -249,7 +264,7 @@ void write_func(Node *root){
             addnewline();
         }
         else if(root -> ptr[i] -> ptr[j] -> type == LOOP){
-            str ="temporary_listhead = temporary_listhead -> next;\npush(st,temporary_listhead);\n";
+            str ="temporary_listhead = temporary_listhead -> next;\nlistpush(st,temporary_listhead);\n";
             len = strlen(str);
             fwrite(str,sizeof(char),len,fp);
             write_func(root -> ptr[i] -> ptr[j]);    
@@ -260,7 +275,7 @@ void write_func(Node *root){
     }
     
     if(root -> type == LOOP)
-        str = "temporary_listhead = st-> arr[st -> top];\n}\npop(st);\n";
+        str = "temporary_listhead = st-> arr[st -> top];\n}\nlistpop(st);\n";
     else 
         str = "}\n";
     len = strlen(str);
@@ -270,9 +285,16 @@ void write_func(Node *root){
 void code_generator(parseroutput* output){
     fp = fopen("my_code.c","w");
     given_func = output;
-    char *str = "#include<prof.h>\n";
+    char *str = "#include";
+    char quotes = (char)34;
     int len = strlen(str);
     fwrite(str,sizeof(char),len,fp);
+    fwrite(&quotes,sizeof(char),1,fp);
+    str = "prof.h";
+    len = strlen(str);
+    fwrite(str,sizeof(char),len,fp);
+    fwrite(&quotes,sizeof(char),1,fp);
+    addnewline();
     for(int i = 0; i < output -> extra_size; i++){
         if(output -> extras[i].type == FUNCTION){
             str = my_strcat(output->extras[i].value,output->extras[i+1].value);

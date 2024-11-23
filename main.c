@@ -8,5 +8,6 @@ FILE *f = fopen("test.c","r");
 //    printf("done\n");
     //printf("%p\n",tokens);
     code_generator(parser(lexer(f)));
+    system(gcc my_code.c && ./a.out);    
     return 0;
 }

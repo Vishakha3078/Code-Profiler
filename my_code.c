@@ -1,4 +1,4 @@
-#include<prof.h>
+#include"prof.h"
 #include<stdio.h>
 #include<stdlib.h>
 void foo(int i);
@@ -13,7 +13,7 @@ foo_cnt = makelist(2);
 moo_cnt = makelist(2);
 temporary_listhead = main_cnt;
 temporary_listhead -> val++;
-stk *st = malloc(sizeof(stk));
+liststk *st = malloc(sizeof(liststk));
 st -> size = 10;
 st -> top = -1;
 st -> arr = (ListNode**)malloc(sizeof(ListNode*)*st-> size);
@@ -22,13 +22,13 @@ j = 2;
 k = 3;
 foo(j);
 temporary_listhead = temporary_listhead -> next;
-push(st,temporary_listhead);
+listpush(st,temporary_listhead);
 while(j != 0){
 temporary_listhead -> val++;
 j--;
 temporary_listhead = st-> arr[st -> top];
 }
-pop(st);
+listpop(st);
 if(j < k){
 temporary_listhead = temporary_listhead -> next;
 temporary_listhead -> val++;
@@ -93,7 +93,6 @@ printf("    int j = 0; -> %d\n",s ->arr[s->top]);
 temporary_listhead = temporary_listhead->next;
 printf("    while(j < i){ -> %d\n",temporary_listhead -> val + 1);
 push(s,temporary_listhead->val);
-printf("    printf("sdfsgsd"); -> %d\n",s ->arr[s->top]);
 printf("    j++; -> %d\n",s ->arr[s->top]);
 printf("    }\n");
 pop(s);
@@ -106,7 +105,6 @@ printf("    int j = 0; -> %d\n",s ->arr[s->top]);
 temporary_listhead = temporary_listhead->next;
 printf("    while(j < i){ -> %d\n",temporary_listhead -> val + 1);
 push(s,temporary_listhead->val);
-printf("    printf("sdfsgsd"); -> %d\n",s ->arr[s->top]);
 printf("    j++; -> %d\n",s ->arr[s->top]);
 printf("    }\n");
 pop(s);
@@ -119,36 +117,34 @@ return 0;
 void foo(int i){
 temporary_listhead = foo_cnt;
 temporary_listhead -> val++;
-stk *st = malloc(sizeof(stk));
+liststk *st = malloc(sizeof(liststk));
 st -> size = 10;
 st -> top = -1;
 st -> arr = (ListNode**)malloc(sizeof(ListNode*)*st-> size);
 int j = 0;
 temporary_listhead = temporary_listhead -> next;
-push(st,temporary_listhead);
+listpush(st,temporary_listhead);
 while(j < i){
 temporary_listhead -> val++;
-printf("sdfsgsd");
 j++;
 temporary_listhead = st-> arr[st -> top];
 }
-pop(st);
+listpop(st);
 }
 void moo(int i){
 temporary_listhead = moo_cnt;
 temporary_listhead -> val++;
-stk *st = malloc(sizeof(stk));
+liststk *st = malloc(sizeof(liststk));
 st -> size = 10;
 st -> top = -1;
 st -> arr = (ListNode**)malloc(sizeof(ListNode*)*st-> size);
 int j = 0;
 temporary_listhead = temporary_listhead -> next;
-push(st,temporary_listhead);
+listpush(st,temporary_listhead);
 while(j < i){
 temporary_listhead -> val++;
-printf("sdfsgsd");
 j++;
 temporary_listhead = st-> arr[st -> top];
 }
-pop(st);
+listpop(st);
 }
