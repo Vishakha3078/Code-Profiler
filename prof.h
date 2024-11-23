@@ -37,8 +37,7 @@ typedef struct parseoutput{
 }parseroutput;
 
 typedef struct ListNode{
-    struct ListNode *left;
-    struct ListNode *right;
+    struct ListNode *next;
     unsigned int val;
 }ListNode;
 
@@ -63,6 +62,7 @@ void push(stk *st,int val){
     return;
 }
 
+FILE *fp;
 Token **lexer(FILE *fp);
 parseroutput *parser(Token **tokens);
 void printtree(Node *root);
@@ -71,6 +71,6 @@ int givecount(Node *root);
 ListNode *makeNode();
 ListNode *makeNext(ListNode *nd);
 ListNode *makelist(int n);
-ListNode *traverseprev(int num,ListNode *nd);
-ListNode *traversenext(int num,ListNode *nd);
-
+char* my_strcat(char *s1,char *s2);
+char *remove_return_type(char *s);
+void printcounts(parseroutput* output);

@@ -1,6 +1,6 @@
 all:run
-final: main.o lexer.o parser.o code_generator.o 
-	gcc main.o lexer.o parser.o code_generator.o -o final
+final: main.o lexer.o parser.o code_generator.o printcounts.o 
+	gcc main.o lexer.o parser.o code_generator.o printcounts.o -o final
 
 main.o: main.c
 	gcc -c main.c -o main.o
@@ -13,6 +13,9 @@ parser.o: parser.c
 
 code_generator.o: code_generator.c
 	gcc -c code_generator.c -o code_generator.o
+
+printcounts.o: printcounts.c
+	gcc -c printcounts.c -o printcounts.o
 
 header: prof.h
 	gcc prof.h
