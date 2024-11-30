@@ -4,10 +4,11 @@
 void foo(int i);
 void moo(int i);
 int main(){
-  int i,j,k;  
+  int i,j,k,m;  
   j = 2;
   k = 3;
   i = 5;
+  m = 0;
 foo(j);
   while (j != 0){
     j--;
@@ -24,9 +25,13 @@ foo(j);
        else{
           k = k;
        }
+     
     i--;
     }
-    i = 5;
+     while(m!= 1){
+        m++;
+      }
+   i= 5;
   }
   i = j + k;
   if(i < i){
@@ -36,7 +41,10 @@ foo(j);
     j=j;
   }
   else{
-    j=j;
+        j=j;
+          if(j != 0)
+              k++;
+          j--;
   }
    if(i < i){
     i=i;

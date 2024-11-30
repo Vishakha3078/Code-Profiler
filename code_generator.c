@@ -5,6 +5,8 @@ char* curr_func_name;
 parseroutput *given_func;
 int if_else_index = 0;
 bool flag = 0;
+stk *while_count_stk;
+char *tabs = "    ";
 
 char* my_strcat(char* s1,char* s2){
     int n = strlen(s1);
@@ -13,6 +15,22 @@ char* my_strcat(char* s1,char* s2){
     strcpy(out,s1);
     strcpy(out+n,s2);
     return out;
+}
+
+char* increase_space(char *string1){
+    char *string2 = "    ";
+    int n = strlen(string1);
+    int m = strlen(string2);
+    char* res = malloc(sizeof(char)*n+m);
+    strcpy(res,string1);
+    strcpy(res+n,string2);
+    return res;
+}
+
+char* decrease_space(char* string){
+    int n = strlen(string);
+    string[n-4] = '\0';
+    return string;
 }
 
 char* remove_return_type(char *s){
@@ -61,7 +79,6 @@ void alloc_all_lists(){
 }
 
 void function_count(Node *root){
-    char *tabs = "    ";
     char c = (char)92;
     char n = 'n';
     char quotes = (char)34;
@@ -71,14 +88,13 @@ void function_count(Node *root){
     int len = strlen(str);
     fwrite(str,sizeof(char),len,fp);    
     fwrite(&quotes,sizeof(char),1,fp);
+
     if(!strcmp(root -> value,"else")){
-        str =my_strcat(tabs,my_strcat(root -> value ,"{ -> %d"));
+        str = my_strcat("    %7d    ->    ",my_strcat(tabs,root -> value));
         j =0;
     }
-    else if(root ->type == LOOP)
-        str =my_strcat(tabs,my_strcat(my_strcat(root -> value ,root->ptr[0]->value),"{"));
     else
-        str =my_strcat(tabs,my_strcat(my_strcat(root -> value ,root->ptr[0]->value),"{ -> %d"));
+        str =my_strcat("    %7d    ->    ",my_strcat(tabs,my_strcat(my_strcat(root -> value ,root->ptr[0]->value),"{")));
     len = strlen(str);
     fwrite(str,sizeof(char),len,fp);
     fwrite(&c,sizeof(char),1,fp);
@@ -88,15 +104,20 @@ void function_count(Node *root){
         str = ",temporary_listhead -> val);\n"; 
     else if(root -> type == CONDITIONAL_STATEMENT)
         str = ",if_else_condition_stk -> arr[if_else_condition_stk -> top]);\n";
-    else
-        str = ");\n";
+    else{
+        if(while_count_stk -> top != -1)
+            str = ",s -> arr[s -> top] + temporary_listhead -> next -> val);\ntemporary_listhead = temporary_listhead->next;\n"; 
+        else 
+            str = ",temporary_listhead -> next -> val + 1);\ntemporary_listhead = temporary_listhead->next;\n";
+       push(while_count_stk,1);   
+    }
     
     len = strlen(str);
     fwrite(str,sizeof(char),len,fp);
     str = "push(s,temporary_listhead->val);\n"; 
     len = strlen(str);
     fwrite(str,sizeof(char),len,fp);
-      
+    tabs = increase_space(tabs);  
     for(int i = 0; i < root -> ptr[j] -> ptrsize; i++){
         if(root->ptr[j]->ptr[i]->type == STATEMENT || root->ptr[j]->ptr[i]->type == FUNCTION){
             str = "printf(";
@@ -105,12 +126,11 @@ void function_count(Node *root){
             fwrite(&quotes,sizeof(char),1,fp);
             
             if(root->ptr[j]->ptr[i]->type == FUNCTION){
-                str = my_strcat(my_strcat(my_strcat(tabs,root -> ptr[j]-> ptr[i] -> value),root -> ptr[j]->ptr[i+1]->value)," -> %d"); 
+                str = my_strcat("    %7d    ->    ",my_strcat(my_strcat(tabs,root -> ptr[j]-> ptr[i] -> value),root -> ptr[j]->ptr[i+1]->value)); 
                 i++;
             }
             else
-                str = my_strcat(my_strcat(tabs,root -> ptr[j]-> ptr[i] -> value)," -> %d"); 
-            
+                str = my_strcat("    %7d    ->    ",my_strcat(tabs,root->ptr[j]->ptr[i]->value)); 
             len = strlen(str);
             fwrite(str,sizeof(char),len,fp);
             fwrite(&c,sizeof(char),1,fp);
@@ -121,14 +141,14 @@ void function_count(Node *root){
             fwrite(str,sizeof(char),len,fp);
         }
         else if(root->ptr[j]->ptr[i]->type == LOOP){
-            str = "temporary_listhead = temporary_listhead->next;\n"; 
-            len = strlen(str);
-            fwrite(str,sizeof(char),len,fp);
-            function_count(root ->ptr[j] -> ptr[i]);
+           function_count(root ->ptr[j] -> ptr[i]);
         }
         else{
-            if(!strcmp(root->ptr[j]->ptr[i]->value,"if"))
+            push(while_count_stk,1);
+            if(!strcmp(root->ptr[j]->ptr[i]->value,"if") && (root -> type == LOOP || root -> type == CONDITIONAL_STATEMENT))
                 str = "push(if_else_condition_stk,temporary_listhead -> val);\ntemporary_listhead = temporary_listhead->next;\n";
+            else if(!strcmp(root->ptr[j]->ptr[i]->value,"if"))
+                str = "push(if_else_condition_stk,1);\ntemporary_listhead = temporary_listhead->next;\n";
             else if(!strcmp(root->ptr[j]->ptr[i]->value,"else if"))
                 str = "push(if_else_condition_stk,pop(if_else_condition_stk) - (temporary_listhead->val));\ntemporary_listhead = temporary_listhead -> next;\n";
             else
@@ -143,22 +163,22 @@ void function_count(Node *root){
             }
         }
     }
+    tabs = decrease_space(tabs);
     str = "printf(";
     len = strlen(str);
     fwrite(str,sizeof(char),len,fp);    
     fwrite(&quotes,sizeof(char),1,fp);
-    str = my_strcat(tabs,"}");
+    str = my_strcat(tabs,"                     }");
     len = strlen(str);
     fwrite(str,sizeof(char),len,fp);
     fwrite(&c,sizeof(char),1,fp);
     fwrite(&n,sizeof(char),1,fp);
     fwrite(&quotes,sizeof(char),1,fp);
-    str =");\n";
+    str = ");\npop(s);\n"; 
     len = strlen(str);
     fwrite(str,sizeof(char),len,fp);
-    str = "pop(s);\n"; 
-    len = strlen(str);
-    fwrite(str,sizeof(char),len,fp);
+    if(root -> type == LOOP || root -> type == CONDITIONAL_STATEMENT)
+        pop(while_count_stk);
     return;
 }
 
@@ -203,7 +223,7 @@ int write_func(Node *root){
         addcount();
     else if(root -> type == CONDITIONAL_STATEMENT){
         if_else_index++;
-        str = "temp = temporary_listhead;\n";
+        str = "listpush(st,temporary_listhead);\n";
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
         char* tmp = malloc(10);
@@ -286,7 +306,7 @@ int write_func(Node *root){
         }
       }
     if(root -> type == CONDITIONAL_STATEMENT){
-          str = "temporary_listhead = temp;\n}\n";
+          str = "temporary_listhead = listpop(st);\n}\n";
             len = strlen(str);
             fwrite(str,sizeof(char),len,fp);
     }
@@ -306,6 +326,11 @@ int write_func(Node *root){
    
 void code_generator(parseroutput* output){
     fp = fopen("my_code.c","w");
+    while_count_stk = malloc(sizeof(stk));
+    while_count_stk -> size = 10;
+    while_count_stk -> top = -1;
+    while_count_stk -> arr = (int*)malloc(sizeof(int));
+
     given_func = output;
     char *str = "#include";
     char quotes = (char)34;
