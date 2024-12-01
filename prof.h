@@ -22,6 +22,11 @@ typedef struct{
     char *value;
 }Token;
 
+typedef struct lexeroutput{
+    Token **token;
+    int token_size;
+}lexeroutput;
+
 typedef struct Node{
     TokenType type;
     char *value;
@@ -54,8 +59,8 @@ typedef struct liststack{
 }liststk;
 
 
-Token **lexer(FILE *fp);
-parseroutput *parser(Token **tokens);
+lexeroutput *lexer(FILE *fp);
+parseroutput *parser(lexeroutput *tokens);
 void printtree(Node *root);
 void code_generator(parseroutput* output);
 int givecount(Node *root);

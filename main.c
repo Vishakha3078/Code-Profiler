@@ -1,6 +1,6 @@
 #include"prof.h"
 int main(){
-FILE *f = fopen("test.c","r");
+FILE *f = fopen("insertion_sort.c","r");
   //Token *tokens = lexer(fp);
  //   printf("tokens = %p\n", tokens);
  //   TokenType temp;
