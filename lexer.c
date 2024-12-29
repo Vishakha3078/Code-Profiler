@@ -1,6 +1,9 @@
 #include"prof.h"
 
 bool one_statement_flag;
+char **variables;
+int variable_len = 15;
+int variable_index = 0;
 
 //print tokens
 void printtokens(Token *token){
@@ -63,6 +66,8 @@ bool next_two_char(char *current,int *index){
 
 //to handle the start and end of FUNCTIONs,LOOPs,CONDITIONAL_STATEMENTs
 Token *check_braces(char *current,int *index){
+        printf("i am here\n");
+    printf("current[*index] = %c\n", current[*index]);
     Token *token = malloc(sizeof(Token));
     stk *st = malloc(sizeof(stk));
     st -> top = -1;
@@ -77,6 +82,7 @@ Token *check_braces(char *current,int *index){
         *index = *index + 1;
         size++;
         while(st -> top != -1){
+    printf("current[*index] = %c\n", current[*index]);
             if(current[*index] == ')')
                 pop(st);
             else if(current[*index] == '(')
@@ -89,6 +95,7 @@ Token *check_braces(char *current,int *index){
                 newtype = realloc(newtype,sizeof(char)*newsize);
             }
         }
+    printf("newtype = %s\n", newtype);
         filterextras(current,index);
         if(current[*index] != '{' && one_statement_flag != 1){
             while(current[*index] != ';'){
@@ -117,6 +124,7 @@ Token *check_braces(char *current,int *index){
             token -> type = STATEMENT;
             token -> value = newtype;
         }
+    printf("newtype = %s\n", newtype);
     } 
        else if(current[*index] == '{'){
         token -> type = CURLY;
@@ -162,6 +170,7 @@ Token *check_type(char *current,int *index,int length,bool *flag){
     char *newtype = malloc(sizeof(char)*newsize);
     int size = 0;
     char temp[5];
+    char *var = malloc(sizeof(char)*33);
     one_statement_flag = 0;
     while(isalpha(current[*index]) && *index < length){
         newtype[size] = current[*index];
@@ -173,7 +182,8 @@ Token *check_type(char *current,int *index,int length,bool *flag){
         }
     } 
     newtype[size] = '\0';
-    if(strcmp(newtype,"while") == 0){
+  
+    if(!strcmp(newtype,"while")){
         token -> type = LOOP;
         token -> value = "while";
         one_statement_flag = 1;
@@ -198,7 +208,64 @@ Token *check_type(char *current,int *index,int length,bool *flag){
         }
     }
     else{
+ /* 
+    if(!strcmp(newtype,"bool")){
+        int tmp = *index;
+        int j = 0;
+        bool flg = 0;
+        filterextras(current,index);
+        int end_statement;
         while(current[*index] != ';' && current[*index] != '('){
+            if(current[*index] == ','){
+                var[j] = 0;
+                j = 0;
+                if (variable_index >= variable_len){
+                    variable_len += 10;
+                    variables = realloc(variables,sizeof(char*)*variable_len);
+                }
+                strcpy(variables[variable_index],var);
+      printf("variables[variable_index] = %s\n", variables[variable_index]);
+                variable_index = variable_index + 1;
+                *index = *index+ 1;
+            }
+            else if(current[*index] == '='){    
+                var[j] = 0;
+                j = 0;
+                if (variable_index >= variable_len){
+                    variable_len += 10;
+                    variables = realloc(variables,sizeof(char*)*variable_len);
+                }
+                strcpy(variables[variable_index],var);
+      printf("variables[variable_index] = %s\n", variables[variable_index]);
+                variable_index = variable_index + 1;
+                *index = *index + 1;
+                while(current[*index] != ',' && current[*index] != ';'){
+                    *index = *index + 1;
+                }
+                if(current[*index] == ';')
+                    flg = 1,end_statement = *index;
+                *index = *index+1;                
+            }
+            var[j++] = current[*index];
+            *index = *index + 1;
+            if(flg == 1)
+                *index = end_statement;
+        }
+        if(flg != 1){
+            var[j] = 0;
+            if (variable_index >= variable_len){
+                variable_len += 1;
+                variables = realloc(variables,sizeof(char*)*variable_len);
+            }
+            strcpy(variables[variable_index],var);
+      printf("variables[variable_index] = %s\n", variables[variable_index]);
+            variable_index = variable_index + 1;
+        }
+        *index = tmp;
+        printf("at the end\n");
+    }*/ 
+    printf("current[*index] = %c\n", current[*index]);
+    while(current[*index] != ';' && current[*index] != '('){
             newtype[size] = current[*index];
             *index = *index + 1;
             size++;
@@ -213,6 +280,7 @@ Token *check_type(char *current,int *index,int length,bool *flag){
             size++;
             *index = *index + 1;
         }            
+
 
         if(size >= newsize)
             newtype = realloc(newtype,sizeof(char)*(newsize+1));
@@ -257,18 +325,24 @@ lexeroutput *lexer(FILE *fp){
     lexeroutput *output = malloc(sizeof(lexeroutput));
     Token **tokens = malloc(sizeof(Token*) * token_number);
     int token_index = 0;//current token
-
+    variables = malloc(sizeof(variable_len));
     while(index < length){
         if(current[index] == '#'){
             tokens[token_index] = create_lib(current,&index);
+        printf("token = %s\n",tokens[token_index] -> value);
+        printf("token = %d\n",tokens[token_index] -> type);
             token_index++;
         }
         else if(isalpha(current[index])){
             tokens[token_index] = check_type(current,&index,length,&flag);
+        printf("token = %s\n",tokens[token_index] -> value);
+        printf("token = %d\n",tokens[token_index] -> type);
             token_index++;
         }
         else{
             tokens[token_index] = check_braces(current,&index);
+        printf("token = %s\n",tokens[token_index] -> value);
+        printf("token = %d\n",tokens[token_index] -> type);
             token_index++;
         }
         if (token_index >= token_number){

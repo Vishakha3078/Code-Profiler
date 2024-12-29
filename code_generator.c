@@ -5,7 +5,6 @@ char* curr_func_name;
 parseroutput *given_func;
 int if_else_index = 0;
 bool flag = 0;
-stk *while_count_stk;
 char *tabs = "    ";
 char c = (char)92;
 char n = 'n';
@@ -150,13 +149,11 @@ void function_count(Node *root){
     fwrite(&quotes,sizeof(char),1,fp);
     if(root -> type == START || root -> type == FUNCTION || !strcmp(root ->value,"else")){
         str = ",temporary_listhead -> val);\npush(s,temporary_listhead->val);\n"; 
-       push(while_count_stk,1);   
     }
     else if(root -> type == CONDITIONAL_STATEMENT)
         str = ",if_else_condition_stk -> arr[if_else_condition_stk -> top]);\npush(s,temporary_listhead->val);\n";
     else{
             str = ",s -> arr[s -> top] + temporary_listhead -> next -> val);\ntemporary_listhead = temporary_listhead->next;\npush(s,temporary_listhead->val);\n"; 
-       push(while_count_stk,1);   
     }
     
     len = strlen(str);
@@ -191,7 +188,6 @@ void function_count(Node *root){
            function_count(root ->ptr[j] -> ptr[i]);
         }
         else{
-            push(while_count_stk,1);
             if(!strcmp(root->ptr[j]->ptr[i]->value,"if"))
                 str = "push(if_else_condition_stk,s -> arr[s ->  top]);\ntemporary_listhead = temporary_listhead->next;\n";
             else if(!strcmp(root->ptr[j]->ptr[i]->value,"else if"))
@@ -224,7 +220,6 @@ void function_count(Node *root){
     str = ");\npop(s);\n"; 
     len = strlen(str);
     fwrite(str,sizeof(char),len,fp);
-    pop(while_count_stk);
     return;
 }
 
@@ -302,7 +297,7 @@ int write_func(Node *root){
         str = "liststk *st = malloc(sizeof(struct liststack));\nst -> size = 10;\nst -> top = -1;\nst -> arr = (ListNode**)malloc(sizeof(ListNode*)*st-> size);\n";
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);    
- }
+    }
     for(int j = 0; j < root -> ptr[i] -> ptrsize;j++){
         if(root -> type == START && j == (root ->  ptr[i] -> ptrsize) -1){
             printcounts();
@@ -385,11 +380,6 @@ int write_func(Node *root){
    
 void code_generator(parseroutput* output){
     fp = fopen("my_code.c","w");
-    while_count_stk = malloc(sizeof(stk));
-    while_count_stk -> size = 10;
-    while_count_stk -> top = -1;
-    while_count_stk -> arr = (int*)malloc(sizeof(int));
-
     given_func = output;
     char *str = "#include";
     char quotes = (char)34;
