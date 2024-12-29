@@ -1,13 +1,10 @@
 #include"prof.h"
 int main(){
-FILE *f = fopen("insertion_sort.c","r");
-  //Token *tokens = lexer(fp);
- //   printf("tokens = %p\n", tokens);
- //   TokenType temp;
-  //  printf("%s\n",tokens[0].value);
-//    printf("done\n");
-    //printf("%p\n",tokens);
+    char* name = malloc(50);
+    printf("Enter file Name:");
+    scanf("%s",name);
+    FILE *f = fopen(name,"r");
     code_generator(parser(lexer(f)));
-    system("gcc stacklist.c code_generator.c parser.c lexer.c my_code.c && ./a.out");    
+    system("gcc stacklist.c code_generator.c parser.c my_code.c -lm && ./a.out");    
     return 0;
 }

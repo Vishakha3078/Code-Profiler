@@ -3,6 +3,7 @@
 #include"string.h"
 #include"ctype.h"
 #include"stdbool.h"
+#include"unistd.h"
 
 typedef enum{
     START,
@@ -71,3 +72,4 @@ void push(stk *s,int val);
 ListNode* listpop(liststk *s);
 void listpush(liststk *s,ListNode *nd);
 ListNode* traversenext(int n,ListNode* nd);
+void give_colour_box(int w,int h);

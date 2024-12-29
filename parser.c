@@ -9,7 +9,7 @@ int givecount(Node *root){
         }
         if(root -> ptr[i] -> type == LOOP || root -> ptr[i] -> type == CONDITIONAL_STATEMENT){
             count++;
-            if(0==strcmp(root -> ptr[i] -> value,"else"))
+            if(!strcmp(root -> ptr[i] -> value,"else"))
                 count += givecount(root -> ptr[i] -> ptr[0]);
             else 
                 count += givecount(root -> ptr[i] -> ptr[1]);             
@@ -102,6 +102,7 @@ void create_tree(Token **tokens,int *token_num,Node *root,Node **ptr,int *ptrsiz
     *token_num = *token_num + 1;
 }
 
+//creating parse tree
 parseroutput* parser(lexeroutput *toks){
     Token **tokens = toks -> token; 
     int token_num = 0;
@@ -139,11 +140,11 @@ parseroutput* parser(lexeroutput *toks){
             }
         }
     }
-    for(int i =  0; i < toks -> token_size; i++){
-        free(toks -> token[i]);
-    }
+    //for(int i =  0; i < toks -> token_size; i++){
+  //      free(toks -> token[i]);
+//    }
    // printf("i am here\n");
- /* for (int i = 0; i < extra_size; i++)
+  /*for (int i = 0; i < extra_size; i++)
         printf("%s\n",extras[i].value);
     for (int i = 0; i < func_index; i++){
         printtree(array_func[i]);

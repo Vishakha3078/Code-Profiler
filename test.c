@@ -1,85 +1,59 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-
-void compute_ideal_soliton_distribution(double* distribution, int K) {
-    int i = 1;
-    while (i <= K) {
-        if (i == 1) {
-            distribution[0] = 1.0 / K; 
-        } else {
-            distribution[i - 1] = 1.0 / (i * (i - 1));
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+void ps(char * s){
+    int i=0;
+    while(1){
+        if(s[i]=='\0') {
+            return ;
         }
         i++;
     }
 }
-
-void compute_robust_soliton_distribution(double* distribution, int K, double delta) {
-    double* tau = (double*)calloc(K, sizeof(double));
-    double R = K / log(K / delta);  
-    int i = 1;
-    while (i <= ceil(R)) {
-        tau[i - 1] = R / (i * K);
+void rotate(char* str, int n){
+    int i=0;
+    char tmp=str[0];
+    while(i<n-1){
+        str[i]=str[i+1];
         i++;
     }
-    tau[(int)ceil(R) - 1] += log(R / delta) / K;
-    double total = 0.0;
-    i = 0;
-    while (i < K) {
-        distribution[i] += tau[i];
-        total += distribution[i];
-        i++;
-    }
-    i = 0;
-    while (i < K) {
-        distribution[i] /= total;
-        i++;
-    }
-    free(tau);
+    str[n-2]=tmp;
 }
 
-int sample_degree(double* distribution, int K) {
-    double cumulative[K];
-    cumulative[0] = distribution[0];
-    int i = 1;
 
-    while (i < K) {
-        cumulative[i] = cumulative[i - 1] + distribution[i];
+int main(){
+    char c[]="this is some text@";
+    int n=sizeof(c);
+    int i=0;
+    char str[n-1][n];
+    while(i<n-1){
+        strcpy(str[i],c);  
+        ps(str[i]);
+        rotate(c,n);
         i++;
     }
-
-    double r = (double)rand() / RAND_MAX;
-    i = 0;
-    while (i < K) {
-        if (r <= cumulative[i]) {
-            return i + 1;
+    char tmp[n];
+    while(i<=n){
+        int j = i+1;
+        while(j<=n){
+            if(strcmp(str[i],str[j])>0){
+                strcpy(tmp,str[i]);
+                strcpy(str[i],str[j]);
+                strcpy(str[j],tmp);
+            }
+            j++;
         }
         i++;
     }
-    return K;
-}
-int main() {
-    int K = 10;          
-    double delta = 0.05;
-    double distribution[K];
-    int i = 0;
-    while (i < K) {
-        distribution[i] = 0.0;
+    i=0;
+    while(i<n){
+        ps(str[i]);
         i++;
     }
-    compute_ideal_soliton_distribution(distribution, K);
-    compute_robust_soliton_distribution(distribution, K, delta);
-    i = 0;
-    while (i < K) {
-        printf("P(%d) = %.6f\n", i + 1, distribution[i]);
-        i++;
-    }
-    srand(time(NULL));
-    i = 0;
-    while (i < 20) {
-        int degree = sample_degree(distribution, K);
+    i=0;
+    while(i<n){
         i++;
     }
     return 0;
-} 
+}
+

@@ -1,11 +1,11 @@
 #include"prof.h"
 
+bool one_statement_flag;
+
+//print tokens
 void printtokens(Token *token){
     printf("TOKEN VALUE : ");
-    printf("'");
-    for(int i = 0; token->value[i] != '\0'; i++)
-        printf("%c",token->value[i]);
-    printf("'");
+    printf("'%s'",token->value);
     switch(token->type){
         case STATEMENT:
             printf(" TOKEN TYPE: STATEMENT\n");
@@ -34,12 +34,14 @@ void printtokens(Token *token){
     }        
 }
 
+//filter outs tabs,spaces,newlines
 void filterextras(char *current,int *index){
-    while(current[*index] == 9 || current[*index] == 32 || current[*index] == '\n')
+    while(current[*index] == 9 || current[*index] == 32 || current[*index] == 10 )
         *index = *index + 1;
     return;
 }
 
+//for checking else if condition in code
 bool next_two_char(char *current,int *index){
     int temp = *index;
     char *newtype = malloc(sizeof(char)* 3);
@@ -59,13 +61,26 @@ bool next_two_char(char *current,int *index){
     }
 }
 
+//to handle the start and end of FUNCTIONs,LOOPs,CONDITIONAL_STATEMENTs
 Token *check_braces(char *current,int *index){
     Token *token = malloc(sizeof(Token));
+    stk *st = malloc(sizeof(stk));
+    st -> top = -1;
+    st -> size = 10;
+    st -> arr = (int*)malloc(sizeof(int)*st -> size);
     if(current[*index] == '('){
         int newsize = 10;
         int size = 0;
         char *newtype = malloc(sizeof(char)*newsize);
-        while(current[*index] != ')'){
+        push(st,1);
+        newtype[size] = current[*index];
+        *index = *index + 1;
+        size++;
+        while(st -> top != -1){
+            if(current[*index] == ')')
+                pop(st);
+            else if(current[*index] == '(')
+                push(st,1);
             newtype[size] = current[*index];
             *index = *index + 1;
             size++;
@@ -74,10 +89,18 @@ Token *check_braces(char *current,int *index){
                 newtype = realloc(newtype,sizeof(char)*newsize);
             }
         }
-        newtype[size] = current[*index];
-        *index = *index + 1;
-        size++;
         filterextras(current,index);
+        if(current[*index] != '{' && one_statement_flag != 1){
+            while(current[*index] != ';'){
+                if(size >= newsize){
+                    newsize += 8;
+                    newtype = realloc(newtype,sizeof(char)*newsize);
+                }
+                newtype[size] = current[*index];
+                *index = *index + 1;
+                size++;
+            }
+        }
         if(size >= newsize)
             newtype = realloc(newtype,sizeof(char)*(newsize+2));
         
@@ -95,7 +118,7 @@ Token *check_braces(char *current,int *index){
             token -> value = newtype;
         }
     } 
-    else if(current[*index] == '{'){
+       else if(current[*index] == '{'){
         token -> type = CURLY;
         token -> value = "{";
         *index = *index + 1;
@@ -109,6 +132,7 @@ Token *check_braces(char *current,int *index){
     return token;
 }
 
+//create pointers of token of headers 
 Token *create_lib(char *current,int *index){
     Token *token = malloc(sizeof(Token));
     int newsize = 10;
@@ -131,13 +155,14 @@ Token *create_lib(char *current,int *index){
     return token;
 }
 
+//check_type of token if its STATEMENT,LOOP,CONDITIONAL_STATEMENT,FUNCTION
 Token *check_type(char *current,int *index,int length,bool *flag){
     Token *token = malloc(sizeof(Token));
     int newsize = 8;
     char *newtype = malloc(sizeof(char)*newsize);
     int size = 0;
     char temp[5];
-
+    one_statement_flag = 0;
     while(isalpha(current[*index]) && *index < length){
         newtype[size] = current[*index];
         *index = *index + 1;
@@ -148,21 +173,23 @@ Token *check_type(char *current,int *index,int length,bool *flag){
         }
     } 
     newtype[size] = '\0';
-    if (strcmp(newtype,"while") == 0){
+    if(strcmp(newtype,"while") == 0){
         token -> type = LOOP;
         token -> value = "while";
+        one_statement_flag = 1;
     }
     else if(strcmp(newtype,"if") == 0){
         token -> type = CONDITIONAL_STATEMENT;
         token -> value = "if";
+        one_statement_flag = 1;
     }
-    else if(strcmp(newtype,"else") == 0){
+    else if(!strcmp(newtype,"else")){
         *index = *index + 1;
         if(next_two_char(current,index)){
             token -> type = CONDITIONAL_STATEMENT;
             token -> value = "else if";
             *index = *index + 2;
-
+            one_statement_flag = 1;
         }
         else{
             token -> type = CONDITIONAL_STATEMENT;
@@ -171,21 +198,6 @@ Token *check_type(char *current,int *index,int length,bool *flag){
         }
     }
     else{
-        if(current[*index] == '('){
-            int val = *index;
-            *index = *index + 1;
-            filterextras(current,index);
-            if(current[*index]== '"'){
-                newtype[size] = '(';
-                size++;
-                if(size >= newsize)
-                    newtype = realloc(newtype,sizeof(char)*(newsize+1));
-                *index = val + 1;
-            }
-            else
-                *index = val;
-        }
-                
         while(current[*index] != ';' && current[*index] != '('){
             newtype[size] = current[*index];
             *index = *index + 1;
@@ -206,14 +218,14 @@ Token *check_type(char *current,int *index,int length,bool *flag){
             newtype = realloc(newtype,sizeof(char)*(newsize+1));
         newtype[size] = '\0';
     
-        if(*flag != 1){
+        if(*flag != 1 && current[*index] == '('){
             int j = 0;
             for(int i = size - 5; i < size + 1; i++){
                 temp[j] = newtype[i];
                 j++;
             }
         }
-        if(strcmp(temp," main") == 0 && *flag != 1){
+        if(strcmp(temp," main") == 0){
             token -> type = START;
             token -> value = newtype;
             *flag = 1;
@@ -231,7 +243,7 @@ Token *check_type(char *current,int *index,int length,bool *flag){
     return token;
 }
 
-
+//creates array of token pointers
 lexeroutput *lexer(FILE *fp){
     int token_number= 20;//size of token array
     int index = 0;//index of cuirrent array
@@ -270,8 +282,8 @@ lexeroutput *lexer(FILE *fp){
     tokens[token_index] = newtype;
     output -> token = tokens;
     output -> token_size = token_number;
-    printf("%s"," ");
-  // for(int i = 0; tokens[i]->type != END; i++)
-    //   printtokens(tokens[i]);
+    /*printf(" ");*/
+    //for(int i = 0; tokens[i]->type != END; i++)
+      //  printtokens(tokens[i]);
     return output;
 }
