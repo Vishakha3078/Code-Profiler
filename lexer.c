@@ -303,7 +303,7 @@ Token *check_braces(char *current,int *index){
             newtype[size] = '\0';
             token -> type = STATEMENT;
             token -> value = newtype;
-       //     if(in_function == 1){
+            if(in_function == 1){
                 char *var = malloc(sizeof(char)*32);
                 int i = 0,j = 1;
                 bool flg = 0;
@@ -364,7 +364,7 @@ Token *check_braces(char *current,int *index){
                         else flg = 1;
                     }
                 }
-         //   }
+            }
         }
     } 
     else if(current[*index] == '{'){
