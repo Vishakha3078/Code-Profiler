@@ -1,6 +1,6 @@
 #include"prof.h"
 
-bool one_statement_flag;
+bool one_statement_flag,in_function;
 char **variables;
 int variable_len = 15;
 int variable_index = 0;
@@ -43,13 +43,21 @@ void filterextras(char *current,int *index){
         *index = *index + 1;
     return;
 }
+//filter outs tabs,spaces,newlines
+void filter_variablename_extras(char *current,int *index){
+    while(current[*index] == 9 || current[*index] == 32 || current[*index] == 10 || current[*index] == 42 )
+        *index = *index + 1;
+    return;
+}
+
 
 //for checking else if condition in code
-bool next_two_char(char *current,int *index){
+bool next_word(char *current,int *index){
     int temp = *index;
-    char *newtype = malloc(sizeof(char)* 3);
+    char *newtype = malloc(sizeof(char)* 33);
     int newsize = 0;
-    while(isalpha(current[*index]) && newsize < 3){
+    filterextras(current,index);
+    while(isalpha(current[*index])|| isdigit(current[*index])){
         newtype[newsize] = current[*index];
         *index = *index + 1;
         newsize++;
@@ -64,10 +72,184 @@ bool next_two_char(char *current,int *index){
     }
 }
 
+//create pointers of token of headers 
+Token *create_lib(char *current,int *index){
+    Token *token = malloc(sizeof(Token));
+    int newsize = 10;
+    char *newtype = malloc(sizeof(char) * newsize);
+    int size = 0;
+
+    while(current[*index] != '\n'){
+        newtype[size] = current[*index];
+        *index = *index + 1;
+        size++;
+        if(size >= newsize){
+            newsize += 8;
+            newtype = realloc(newtype,sizeof(char)*newsize);
+        }
+    }
+    newtype[size] = '\0';
+    token -> type = HEADER;
+    token -> value = newtype;
+    filterextras(current,index);
+    return token;
+}
+
+void add_variable(char* var){
+    if (variable_index >= variable_len){
+            variable_len += 10;
+            variables = realloc(variables,sizeof(char*)*variable_len);
+        }
+    variables[variable_index] = malloc(sizeof(char)*strlen(var)+1);
+    strcpy(variables[variable_index],var);
+    variable_index = variable_index + 1;
+    return;    
+}
+
+void check_var(char *current,int *index){
+    int j = 0;
+    bool flg = 0;
+    int end_statement;
+    char *var = malloc(sizeof(char)*33);
+    while(current[*index] != ';' && current[*index] != '('){
+        if(current[*index] == ','){
+            var[j] = 0;
+            j = 0;
+            add_variable(var);
+           *index = *index + 1;
+            filter_variablename_extras(current,index);
+        }
+        else if(current[*index] == '=' || current[*index] == '['){    
+            var[j] = 0;
+            j = 0;
+            add_variable(var);
+            *index = *index + 1;
+            filter_variablename_extras(current,index);
+            while(current[*index] != ',' && current[*index] != ';'){
+                *index = *index + 1;
+            }
+            if(current[*index] == ';')
+                flg = 1,end_statement = *index;
+            *index = *index + 1;
+            filter_variablename_extras(current,index);
+        }
+        var[j++] = current[*index];
+        *index = *index + 1;
+        filter_variablename_extras(current,index);
+        if(flg == 1)
+            *index = end_statement;
+    }
+    if(flg != 1){
+        var[j] = 0;
+        add_variable(var);
+    }
+    return;
+} 
+
+void check_redeclared_names(char* current,int *index){
+    while(current[*index] != '}')
+        *index = *index + 1;
+    *index = *index + 1;
+    filter_variablename_extras(current,index);
+    check_var(current,index);
+    return;
+}
+
+int* short_type_variables(char *current,int *index){
+    char *var = malloc(sizeof(char)*32);
+    filter_variablename_extras(current,index);
+    int i = 0;
+    int tmp = *index; 
+    while(isalpha(current[*index])|| isdigit(current[*index])||current[*index] == 95){
+        var[i] = current[*index];
+        *index = *index + 1;
+    }  
+    var[i] = 0,i = 0;
+    if(!strcmp(var,"int")){
+        filter_variablename_extras(current,index);
+        return index;
+    }
+    else{
+        *index = tmp;
+        return index;
+    }
+}
+   
+int* long_type_variables(char *current,int *index){
+    char *var = malloc(sizeof(char)*32);
+    filter_variablename_extras(current,index);
+    int i = 0;
+    int tmp = *index; 
+    while(isalpha(current[*index])||isdigit(current[*index])||current[*index] == 95){
+        var[i] = current[*index];
+    }  
+    var[i] = 0;
+    i = 0;
+    if(!strcmp(var,"int")||!strcmp(var,"double")){
+        filter_variablename_extras(current,index);
+        return index;
+    }
+    else if(!strcmp(var,"long")){
+        filter_variablename_extras(current,index);
+        tmp = *index; 
+        while(isalpha(current[*index]) || isdigit(current[*index])||current[*index] == 95){
+            var[i] = current[*index];
+            *index = *index + 1;
+        }  
+        var[i] = 0;
+        i = 0;
+        if(!strcmp(var,"int")){
+            filter_variablename_extras(current,index);
+            return index;
+        }
+        else{
+            *index = tmp;
+            return index;
+        }   
+    }
+    else{
+        *index =tmp;
+        return index;
+    }
+}
+
+
+int* signed_unsigned_type_variables(char *current,int *index){
+    char *var = malloc(sizeof(char)*32);
+    filter_variablename_extras(current,index);
+    int i = 0;
+    int tmp = *index; 
+    while(isalpha(current[*index])||isdigit(current[*index])||current[*index]==95){
+        var[i] = current[*index];
+        *index = *index + 1;
+    }  
+    var[i] = 0;
+    i = 0;
+    if(!strcmp(var,"int")||!strcmp(var,"char")||!strcmp(var,"short")||!strcmp(var,"long")){
+        filter_variablename_extras(current,index);
+        return index;
+    }
+    else{
+        *index = tmp;
+        return index;
+    }
+}
+
+void add_parameters_name(char* newtype,int* j){
+    char *var = malloc(sizeof(char)*32);
+    int i = 0;
+    while(isalpha(newtype[*j])||isdigit(newtype[*j])||newtype[*j] == 95){
+        var[i++] = newtype[*j];
+        *j = *j + 1;
+    }  
+    var[i] = 0;
+    add_variable(var);
+    while(newtype[*j] != ',' || newtype[*j] != ')')
+        *j = *j + 1;
+    return;
+}
 //to handle the start and end of FUNCTIONs,LOOPs,CONDITIONAL_STATEMENTs
 Token *check_braces(char *current,int *index){
-        printf("i am here\n");
-    printf("current[*index] = %c\n", current[*index]);
     Token *token = malloc(sizeof(Token));
     stk *st = malloc(sizeof(stk));
     st -> top = -1;
@@ -82,7 +264,6 @@ Token *check_braces(char *current,int *index){
         *index = *index + 1;
         size++;
         while(st -> top != -1){
-    printf("current[*index] = %c\n", current[*index]);
             if(current[*index] == ')')
                 pop(st);
             else if(current[*index] == '(')
@@ -95,7 +276,6 @@ Token *check_braces(char *current,int *index){
                 newtype = realloc(newtype,sizeof(char)*newsize);
             }
         }
-    printf("newtype = %s\n", newtype);
         filterextras(current,index);
         if(current[*index] != '{' && one_statement_flag != 1){
             while(current[*index] != ';'){
@@ -123,10 +303,71 @@ Token *check_braces(char *current,int *index){
             newtype[size] = '\0';
             token -> type = STATEMENT;
             token -> value = newtype;
+       //     if(in_function == 1){
+                char *var = malloc(sizeof(char)*32);
+                int i = 0,j = 1;
+                bool flg = 0;
+                    printf("newtype-> %s\n",newtype);
+                    printf("newtype1-> %c\n",newtype[1]);
+                while(flg != 1){
+                    filterextras(newtype,&j);
+                    if(newtype[j] == ')')
+                        break;                
+                    printf("newtype-> %c\n",newtype[j]);
+                    while(isalpha(newtype[j])||isdigit(newtype[j])||newtype[j] == 95){
+                        var[i++] = newtype[j++];
+                    printf("var -> %c\n",var[i-1]);
+                    sleep(10);
+                    }
+                    var[i]= 0;
+                    i = 0;
+                    printf("var -> %s\n",var);
+                    if(!strcmp(var,"int")||!strcmp(var,"char")||!strcmp(var,"float")||!strcmp(var,"bool")||!strcmp(var,"_Bool")||!strcmp(var,"void")||!strcmp(var,"double")||!strcmp(var,"size_t")||!strcmp(var,"int8_t")||!strcmp(var,"uint8_t")||!strcmp(var,"int16_t")||!strcmp(var,"ptrdiff_t")){
+                        filter_variablename_extras(newtype,&j);
+                        if(newtype[j] == ')')
+                            break;                
+                        add_parameters_name(newtype,&j);
+                        if(newtype[j] == ',') j++;
+                        else flg = 1;
+                    }
+                    else if(!strcmp(var,"short")){
+                        short_type_variables(newtype,&j);
+                        if(newtype[j] == ')')
+                            break;                
+                        add_parameters_name(newtype,&j);
+                        if(newtype[j] == ',') j++;
+                        else flg = 1;
+                    }
+                    else if(!strcmp(var,"long")){
+                        long_type_variables(newtype,&j);
+                        if(newtype[j] == ')')
+                            break;                
+                        add_parameters_name(newtype,&j);
+                        if(newtype[j] == ',') j++;
+                        else flg = 1;
+                    }
+                    else if(!strcmp(var,"signed") || !strcmp(var,"unsigned")){
+                        signed_unsigned_type_variables(newtype,&j);
+                        if(newtype[j] == ')')
+                            break;                
+                        add_parameters_name(newtype,&j);
+                        if(newtype[j] == ',') j++;
+                        else flg = 1;
+                    }
+                    else if(!strcmp(var,"struct")){
+                        filterextras(newtype,&j);
+                        while(isalpha(newtype[j])||isdigit(newtype[j])||newtype[j] == 95)
+                            j++;
+                        filter_variablename_extras(newtype,&j);
+                        add_parameters_name(newtype,&j);
+                        if(newtype[j] == ',') j++;
+                        else flg = 1;
+                    }
+                }
+         //   }
         }
-    printf("newtype = %s\n", newtype);
     } 
-       else if(current[*index] == '{'){
+    else if(current[*index] == '{'){
         token -> type = CURLY;
         token -> value = "{";
         *index = *index + 1;
@@ -140,28 +381,6 @@ Token *check_braces(char *current,int *index){
     return token;
 }
 
-//create pointers of token of headers 
-Token *create_lib(char *current,int *index){
-    Token *token = malloc(sizeof(Token));
-    int newsize = 10;
-    char *newtype = malloc(sizeof(char) * newsize);
-    int size = 0;
-
-    while(current[*index] != '\n'){
-        newtype[size] = current[*index];
-        *index = *index + 1;
-        size++;
-        if(size >= newsize){
-            newsize += 8;
-            newtype = realloc(newtype,sizeof(char)*newsize);
-        }
-    }
-    newtype[size] = '\0';
-    token -> type = HEADER;
-    token -> value = newtype;
-    filterextras(current,index);
-    return token;
-}
 
 //check_type of token if its STATEMENT,LOOP,CONDITIONAL_STATEMENT,FUNCTION
 Token *check_type(char *current,int *index,int length,bool *flag){
@@ -170,9 +389,8 @@ Token *check_type(char *current,int *index,int length,bool *flag){
     char *newtype = malloc(sizeof(char)*newsize);
     int size = 0;
     char temp[5];
-    char *var = malloc(sizeof(char)*33);
-    one_statement_flag = 0;
-    while(isalpha(current[*index]) && *index < length){
+    one_statement_flag = 0,in_function = 0;
+    while((isalpha(current[*index])||isdigit(current[*index])||current[*index]==95) && *index < length){
         newtype[size] = current[*index];
         *index = *index + 1;
         size++;
@@ -195,7 +413,7 @@ Token *check_type(char *current,int *index,int length,bool *flag){
     }
     else if(!strcmp(newtype,"else")){
         *index = *index + 1;
-        if(next_two_char(current,index)){
+        if(next_word(current,index)){
             token -> type = CONDITIONAL_STATEMENT;
             token -> value = "else if";
             *index = *index + 2;
@@ -208,71 +426,78 @@ Token *check_type(char *current,int *index,int length,bool *flag){
         }
     }
     else{
- /* 
-    if(!strcmp(newtype,"bool")){
-        int tmp = *index;
-        int j = 0;
-        bool flg = 0;
-        filterextras(current,index);
-        int end_statement;
-        while(current[*index] != ';' && current[*index] != '('){
-            if(current[*index] == ','){
-                var[j] = 0;
-                j = 0;
-                if (variable_index >= variable_len){
-                    variable_len += 10;
-                    variables = realloc(variables,sizeof(char*)*variable_len);
-                }
-                strcpy(variables[variable_index],var);
-      printf("variables[variable_index] = %s\n", variables[variable_index]);
-                variable_index = variable_index + 1;
-                *index = *index+ 1;
-            }
-            else if(current[*index] == '='){    
-                var[j] = 0;
-                j = 0;
-                if (variable_index >= variable_len){
-                    variable_len += 10;
-                    variables = realloc(variables,sizeof(char*)*variable_len);
-                }
-                strcpy(variables[variable_index],var);
-      printf("variables[variable_index] = %s\n", variables[variable_index]);
-                variable_index = variable_index + 1;
+        char *var = malloc(sizeof(char)*32);
+        int i = 0;
+        int tmp,ttmp;
+        ttmp = *index;
+        if(!strcmp(newtype,"int")||!strcmp(newtype,"char")||!strcmp(newtype,"float")||!strcmp(newtype,"bool")||!strcmp(newtype,"_Bool")||!strcmp(newtype,"void")||!strcmp(newtype,"double")||!strcmp(newtype,"size_t")||!strcmp(newtype,"int8_t")||!strcmp(newtype,"uint8_t")||!strcmp(newtype,"int16_t")||!strcmp(newtype,"ptrdiff_t")){
+            filter_variablename_extras(current,index);
+            check_var(current,index); 
+        }
+        else if(!strcmp(newtype,"short")){
+            check_var(current,short_type_variables(current,index));
+        }
+        else if(!strcmp(newtype,"long")){
+            check_var(current,long_type_variables(current,index));
+        }
+        else if(!strcmp(newtype,"signed") || !strcmp(newtype,"unsigned")){
+            check_var(current,signed_unsigned_type_variables(current,index));
+        }
+        else if(!strcmp(newtype,"struct")){
+            filterextras(current,index);
+            while(isalpha(current[*index])||isdigit(current[*index])||current[*index] == 95){
+                var[i] = current[*index];
                 *index = *index + 1;
-                while(current[*index] != ',' && current[*index] != ';'){
+            }  
+            var[i] = 0;
+            i = 0;
+            add_variable(var);
+        }
+        else if(!strcmp(newtype,"typedef")){
+            filterextras(current,index);
+            while(isalpha(current[*index])||isdigit(current[*index])||current[*index] == 95){
+                var[i] = current[*index];
+                *index = *index + 1;
+            }  
+            var[i] = 0;
+            i = 0;
+            filter_variablename_extras(current,index);
+            if(current[*index] != '{'){
+                check_redeclared_names(current,index);     
+            }
+            else if(!strcmp(var,"struct")){
+                while(isalpha(current[*index])||isdigit(current[*index])||current[*index] == 95){
+                    var[i] = current[*index];
                     *index = *index + 1;
-                }
-                if(current[*index] == ';')
-                    flg = 1,end_statement = *index;
-                *index = *index+1;                
+                }  
+                var[i] = 0;
+                i = 0;
+                add_variable(var);
+                check_redeclared_names(current,index);
+            }  
+            else if(!strcmp(var,"int")||!strcmp(var,"char")||!strcmp(var,"float")||!strcmp(var,"bool")||!strcmp(var,"_Bool")||!strcmp(var,"void")||!strcmp(var,"double")||!strcmp(var,"size_t")||!strcmp(var,"int8_t")||!strcmp(var,"uint8_t")||!strcmp(var,"int16_t")||!strcmp(var,"ptrdiff_t")){
+            filter_variablename_extras(current,index);
+            check_var(current,index); 
             }
-            var[j++] = current[*index];
-            *index = *index + 1;
-            if(flg == 1)
-                *index = end_statement;
-        }
-        if(flg != 1){
-            var[j] = 0;
-            if (variable_index >= variable_len){
-                variable_len += 1;
-                variables = realloc(variables,sizeof(char*)*variable_len);
+            else if(!strcmp(var,"short")){
+                check_var(current,short_type_variables(current,index));
+            }            
+            else if(!strcmp(var,"long")){
+                check_var(current,long_type_variables(current,index));
             }
-            strcpy(variables[variable_index],var);
-      printf("variables[variable_index] = %s\n", variables[variable_index]);
-            variable_index = variable_index + 1;
+            else if(!strcmp(var,"signed") || !strcmp(var,"unsigned")){
+                check_var(current,signed_unsigned_type_variables(current,index));
+            }
         }
-        *index = tmp;
-        printf("at the end\n");
-    }*/ 
-    printf("current[*index] = %c\n", current[*index]);
-    while(current[*index] != ';' && current[*index] != '('){
+        *index = ttmp;
+        while(current[*index] != ';' && current[*index] != '('){
             newtype[size] = current[*index];
             *index = *index + 1;
             size++;
             if(size >= newsize){
                 newsize += 8;
                 newtype = realloc(newtype,sizeof(char)*newsize);
-            }
+        }
         }
 
         if(current[*index] == ';'){
@@ -285,7 +510,7 @@ Token *check_type(char *current,int *index,int length,bool *flag){
         if(size >= newsize)
             newtype = realloc(newtype,sizeof(char)*(newsize+1));
         newtype[size] = '\0';
-    
+     
         if(*flag != 1 && current[*index] == '('){
             int j = 0;
             for(int i = size - 5; i < size + 1; i++){
@@ -297,10 +522,12 @@ Token *check_type(char *current,int *index,int length,bool *flag){
             token -> type = START;
             token -> value = newtype;
             *flag = 1;
+            in_function = 1;
         }
         else if(current[*index] == '('){
             token -> type = FUNCTION;
             token -> value = newtype;
+            in_function = 1;
         }
         else{
             token -> type  = STATEMENT;
@@ -325,24 +552,21 @@ lexeroutput *lexer(FILE *fp){
     lexeroutput *output = malloc(sizeof(lexeroutput));
     Token **tokens = malloc(sizeof(Token*) * token_number);
     int token_index = 0;//current token
-    variables = malloc(sizeof(variable_len));
+    variables = malloc(sizeof(char*)*variable_len);
     while(index < length){
         if(current[index] == '#'){
             tokens[token_index] = create_lib(current,&index);
-        printf("token = %s\n",tokens[token_index] -> value);
-        printf("token = %d\n",tokens[token_index] -> type);
+            printf("token -> %s\n",tokens[token_index] -> value);
             token_index++;
         }
         else if(isalpha(current[index])){
             tokens[token_index] = check_type(current,&index,length,&flag);
-        printf("token = %s\n",tokens[token_index] -> value);
-        printf("token = %d\n",tokens[token_index] -> type);
+            printf("token -> %s\n",tokens[token_index] -> value);
             token_index++;
         }
         else{
             tokens[token_index] = check_braces(current,&index);
-        printf("token = %s\n",tokens[token_index] -> value);
-        printf("token = %d\n",tokens[token_index] -> type);
+            printf("token -> %s\n",tokens[token_index] -> value);
             token_index++;
         }
         if (token_index >= token_number){
@@ -356,8 +580,10 @@ lexeroutput *lexer(FILE *fp){
     tokens[token_index] = newtype;
     output -> token = tokens;
     output -> token_size = token_number;
+  for (int i = 0;i < variable_index;i++)
+    printf("variables[i] = %s\n", variables[i]);
     /*printf(" ");*/
-    //for(int i = 0; tokens[i]->type != END; i++)
-      //  printtokens(tokens[i]);
+    for(int i = 0; tokens[i]->type != END; i++)
+        printtokens(tokens[i]);
     return output;
-}
+}     

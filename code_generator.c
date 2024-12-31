@@ -23,8 +23,7 @@ char* my_strcat(char* s1,char* s2){
 char* print_check(char* s){
     int len = strlen(s);
     int j = 1;
-    int k = 0;
-    int i = 0;
+    int i = 0,k = 0,l = 0,m = 0;
     char *str = malloc(sizeof(char)*len+1);
     for(i = 0; i < len; i++){
         if(s[i] == '%'){
@@ -33,23 +32,9 @@ char* print_check(char* s){
             str[k] = s[i];
             k++;
         }
-        str[k] = s[i];
-        k++;
-    }
-    return str;
-}
-
-char* check_quotes(char* s){
-    int len = strlen(s);
-    int j = 1;
-    int k = 0;
-    int i = 0;
-    int l = 0;
-    char *str = malloc(sizeof(char)*len+1);
-    for(i = 0; i < len; i++){
-        if(s[i] == (char)34){
-            j++;
-            str = realloc(str,sizeof(char)*(len+j));
+        else if(s[i] == (char)34){
+            m++;
+            str = realloc(str,sizeof(char)*(len+m));
             str[k] = (char)92;
             k++;
         }
@@ -58,13 +43,12 @@ char* check_quotes(char* s){
             str = realloc(str,sizeof(char)*(len+l));
             str[k] = (char)92;
             k++;
-        }
-        str[k] = s[i];
+        }str[k] = s[i];
         k++;
     }
     return str;
 }
-  
+
 char* increase_space(char *string1){
     char *string2 = "    ";
     int n = strlen(string1);
@@ -167,12 +151,10 @@ void function_count(Node *root){
             fwrite(&quotes,sizeof(char),1,fp);
             
             if(root->ptr[j]->ptr[i]->type == FUNCTION){
-                root->ptr[j]->ptr[i+1]->value = check_quotes(root ->  ptr[j] -> ptr[i+1]-> value);
                 str = my_strcat("           \033[0;33m%7d\033[0m    |",my_strcat(my_strcat(tabs,root -> ptr[j]-> ptr[i] -> value),print_check(root -> ptr[j]->ptr[i+1]->value))); 
                 i++;
             }
             else{
-                root->ptr[j]->ptr[i]->value= check_quotes(root -> ptr[j] -> ptr[i]->value);
                 str = my_strcat("           \033[0;33m%7d\033[0m    |",my_strcat(tabs,print_check(root->ptr[j]->ptr[i]->value)));
             }
             len = strlen(str);

@@ -1,6 +1,6 @@
 all:run
-final: main.o lexer.o parser.o code_generator.o stacklist.o colour.o
-	gcc main.o lexer.o parser.o code_generator.o stacklist.o colour.o -o final
+final: main.o lexer.o parser.o code_generator.o stacklist.o trie.o
+	gcc main.o lexer.o parser.o code_generator.o stacklist.o trie.o -o final
 
 main.o: main.c
 	gcc -c main.c -o main.o

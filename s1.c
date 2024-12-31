@@ -2,7 +2,7 @@
 #define True 1
 #define False 0
 
-int main(void) {
+int main(){
     int p = 2;
     int i, isPrime;
     while ( p < 1000 ) {

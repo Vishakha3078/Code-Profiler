@@ -59,6 +59,11 @@ typedef struct liststack{
     ListNode **arr;
 }liststk;
 
+typedef struct trie_node{
+    struct trie_node** list;
+    bool is_end;
+}trie_node;
+
 
 lexeroutput *lexer(FILE *fp);
 parseroutput *parser(lexeroutput *tokens);
@@ -73,3 +78,6 @@ ListNode* listpop(liststk *s);
 void listpush(liststk *s,ListNode *nd);
 ListNode* traversenext(int n,ListNode* nd);
 void give_colour_box(int w,int h);
+trie_node* create_trie_node();  
+void insert_in_trie(trie_node* root,char* string);
+bool is_in_trie(trie_node* root,char* string);
