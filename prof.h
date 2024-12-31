@@ -4,7 +4,10 @@
 #include"ctype.h"
 #include"stdbool.h"
 #include"unistd.h"
+#include"time.h"
 
+extern char* my_variable;
+ 
 typedef enum{
     START,
     STATEMENT,

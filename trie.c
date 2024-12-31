@@ -30,7 +30,6 @@ void insert_in_trie(trie_node* root , char* string){
         root = root->list[k];
     }
     root->is_end = true;
-    printf("%s inserted\n",string);
     return ;
 }
 

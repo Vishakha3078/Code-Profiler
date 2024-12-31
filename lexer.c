@@ -37,6 +37,31 @@ void printtokens(Token *token){
     }        
 }
 
+void create_my_variable(){
+    trie_node *root = create_trie_node();
+    for (int i = 0;i < variable_index;i++)
+        insert_in_trie(root,variables[i]);
+    int array[]={97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,95,48,49,50,51,52,53,54,55,56,57};
+    char *string = malloc(sizeof(char)*31);
+    int j;
+    int val;
+    do{
+        j = 0;
+        srand(time(NULL));
+        val = rand();
+        val = val%53;
+        string[j++] =(char)array[val]; 
+        for(int i = 1; i < 31; i++){
+            val = rand();
+            val = val%63;
+            string[j++] =(char)array[val]; 
+        }
+        string[j] = 0;
+    }while(is_in_trie(root,string));
+    char* my_variable = malloc(sizeof(char)*33);
+    strcpy(my_variable,string);
+    return;
+}
 //filter outs tabs,spaces,newlines
 void filterextras(char *current,int *index){
     while(current[*index] == 9 || current[*index] == 32 || current[*index] == 10 )
@@ -244,8 +269,8 @@ void add_parameters_name(char* newtype,int* j){
     }  
     var[i] = 0;
     add_variable(var);
-    while(newtype[*j] != ',' || newtype[*j] != ')')
-        *j = *j + 1;
+    while(newtype[*j] != ',' && newtype[*j] != ')')
+       *j = *j + 1;
     return;
 }
 //to handle the start and end of FUNCTIONs,LOOPs,CONDITIONAL_STATEMENTs
@@ -307,21 +332,15 @@ Token *check_braces(char *current,int *index){
                 char *var = malloc(sizeof(char)*32);
                 int i = 0,j = 1;
                 bool flg = 0;
-                    printf("newtype-> %s\n",newtype);
-                    printf("newtype1-> %c\n",newtype[1]);
                 while(flg != 1){
                     filterextras(newtype,&j);
                     if(newtype[j] == ')')
                         break;                
-                    printf("newtype-> %c\n",newtype[j]);
                     while(isalpha(newtype[j])||isdigit(newtype[j])||newtype[j] == 95){
                         var[i++] = newtype[j++];
-                    printf("var -> %c\n",var[i-1]);
-                    sleep(10);
                     }
                     var[i]= 0;
                     i = 0;
-                    printf("var -> %s\n",var);
                     if(!strcmp(var,"int")||!strcmp(var,"char")||!strcmp(var,"float")||!strcmp(var,"bool")||!strcmp(var,"_Bool")||!strcmp(var,"void")||!strcmp(var,"double")||!strcmp(var,"size_t")||!strcmp(var,"int8_t")||!strcmp(var,"uint8_t")||!strcmp(var,"int16_t")||!strcmp(var,"ptrdiff_t")){
                         filter_variablename_extras(newtype,&j);
                         if(newtype[j] == ')')
@@ -556,17 +575,14 @@ lexeroutput *lexer(FILE *fp){
     while(index < length){
         if(current[index] == '#'){
             tokens[token_index] = create_lib(current,&index);
-            printf("token -> %s\n",tokens[token_index] -> value);
             token_index++;
         }
         else if(isalpha(current[index])){
             tokens[token_index] = check_type(current,&index,length,&flag);
-            printf("token -> %s\n",tokens[token_index] -> value);
             token_index++;
         }
         else{
             tokens[token_index] = check_braces(current,&index);
-            printf("token -> %s\n",tokens[token_index] -> value);
             token_index++;
         }
         if (token_index >= token_number){
@@ -580,10 +596,9 @@ lexeroutput *lexer(FILE *fp){
     tokens[token_index] = newtype;
     output -> token = tokens;
     output -> token_size = token_number;
-  for (int i = 0;i < variable_index;i++)
-    printf("variables[i] = %s\n", variables[i]);
-    /*printf(" ");*/
-    for(int i = 0; tokens[i]->type != END; i++)
-        printtokens(tokens[i]);
+    create_my_variable();
+   /*printf(" ");*/
+    //for(int i = 0; tokens[i]->type != END; i++)
+     //   printtokens(tokens[i]);
     return output;
 }     
