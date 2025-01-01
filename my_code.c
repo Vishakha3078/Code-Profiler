@@ -1,102 +1,234 @@
-#include"prof.h"
+#include"new_code.h"
 #include<stdio.h>
-#define True 1
-#define False 0
-ListNode* main_cnt;
+#include<string.h>
+#include<stdlib.h>
+ListNode** j1EniQTv_r5J3qMC0BuhFist3C0BCEb;
+void ps(char * s){
+ListNode *D820LPMlJ52FZ042SEU3FHTuZ3DWRF2;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = j1EniQTv_r5J3qMC0BuhFist3C0BCEb[0];
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+liststk *profiler_listnode_stack = malloc(sizeof(struct liststack));
+profiler_listnode_stack -> size = 10;
+profiler_listnode_stack -> top = -1;
+profiler_listnode_stack -> arr = (ListNode**)malloc(sizeof(ListNode*)*profiler_listnode_stack-> size);
+int i=0;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+listpush(profiler_listnode_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+while(1){
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+if(s[i]=='\0'){
+listpush(profiler_listnode_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = traversenext(1,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+return ;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = listpop(profiler_listnode_stack);
+}
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = traversenext(1,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+i++;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = profiler_listnode_stack-> arr[profiler_listnode_stack -> top];
+}
+listpop(profiler_listnode_stack);
+}
+void rotate(char* str, int n){
+ListNode *D820LPMlJ52FZ042SEU3FHTuZ3DWRF2;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = j1EniQTv_r5J3qMC0BuhFist3C0BCEb[1];
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+liststk *profiler_listnode_stack = malloc(sizeof(struct liststack));
+profiler_listnode_stack -> size = 10;
+profiler_listnode_stack -> top = -1;
+profiler_listnode_stack -> arr = (ListNode**)malloc(sizeof(ListNode*)*profiler_listnode_stack-> size);
+int i=0;
+char tmp=str[0];
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+listpush(profiler_listnode_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+while(i<n-1){
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+str[i]=str[i+1];
+i++;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = profiler_listnode_stack-> arr[profiler_listnode_stack -> top];
+}
+listpop(profiler_listnode_stack);
+str[n-2]=tmp;
+}
 int main(){
-main_cnt = makelist(5);
-int My_Tot_Count = 0;
-ListNode *temporary_listhead;
-temporary_listhead = main_cnt;
-temporary_listhead -> val++;
-liststk *st = malloc(sizeof(struct liststack));
-st -> size = 10;
-st -> top = -1;
-st -> arr = (ListNode**)malloc(sizeof(ListNode*)*st-> size);
-int p = 2;
-int i, isPrime;
-temporary_listhead = temporary_listhead -> next;
-listpush(st,temporary_listhead);
-while( p < 1000 ){
-temporary_listhead -> val++;
-isPrime = True;
-i = 2;
-temporary_listhead = temporary_listhead -> next;
-listpush(st,temporary_listhead);
-while( isPrime && i < p ){
-temporary_listhead -> val++;
-if(p % i == 0){
-listpush(st,temporary_listhead);
-temporary_listhead = traversenext(1,temporary_listhead);
-temporary_listhead -> val++;
-isPrime = False;
-temporary_listhead = listpop(st);
+j1EniQTv_r5J3qMC0BuhFist3C0BCEb=malloc(sizeof(ListNode*)*3);
+j1EniQTv_r5J3qMC0BuhFist3C0BCEb[0] = makelist(3);
+j1EniQTv_r5J3qMC0BuhFist3C0BCEb[1] = makelist(2);
+j1EniQTv_r5J3qMC0BuhFist3C0BCEb[2] = makelist(7);
+ListNode *D820LPMlJ52FZ042SEU3FHTuZ3DWRF2;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = j1EniQTv_r5J3qMC0BuhFist3C0BCEb[2];
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+liststk *profiler_listnode_stack = malloc(sizeof(struct liststack));
+profiler_listnode_stack -> size = 10;
+profiler_listnode_stack -> top = -1;
+profiler_listnode_stack -> arr = (ListNode**)malloc(sizeof(ListNode*)*profiler_listnode_stack-> size);
+char c[]="this is some text@";
+int n=sizeof(c);
+int i=0;
+char str[n-1][n];
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+listpush(profiler_listnode_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+while(i<n-1){
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+strcpy(str[i],c);
+ps(str[i]);
+rotate(c,n);
+i++;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = profiler_listnode_stack-> arr[profiler_listnode_stack -> top];
 }
-temporary_listhead = traversenext(1,temporary_listhead);
-i = i + 1;
-temporary_listhead = st-> arr[st -> top];
+listpop(profiler_listnode_stack);
+char tmp[n];
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+listpush(profiler_listnode_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+while(i<=n){
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+int j = i+1;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+listpush(profiler_listnode_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+while(j<=n){
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+if(strcmp(str[i],str[j])>0){
+listpush(profiler_listnode_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = traversenext(1,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+strcpy(tmp,str[i]);
+strcpy(str[i],str[j]);
+strcpy(str[j],tmp);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = listpop(profiler_listnode_stack);
 }
-listpop(st);
-if(isPrime){
-listpush(st,temporary_listhead);
-temporary_listhead = traversenext(2,temporary_listhead);
-temporary_listhead -> val++;
-printf("%d ", p);
-temporary_listhead = listpop(st);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = traversenext(1,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+j++;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = profiler_listnode_stack-> arr[profiler_listnode_stack -> top];
 }
-temporary_listhead = traversenext(2,temporary_listhead);
-p = p + 1;
-temporary_listhead = st-> arr[st -> top];
+listpop(profiler_listnode_stack);
+i++;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = profiler_listnode_stack-> arr[profiler_listnode_stack -> top];
 }
-listpop(st);
-stk *s = malloc(sizeof(stk));
-s -> size = 10;
-s -> top = -1;
-s -> arr = (int*)malloc(sizeof(int)*s-> size);
-stk *if_else_condition_stk = malloc(sizeof(stk));
-if_else_condition_stk -> size = 10;
-if_else_condition_stk -> top = -1;
-if_else_condition_stk -> arr = (int*)malloc(sizeof(int)*s-> size);
-printf("\n");temporary_listhead = main_cnt;
-printf("           [0;33m%7d[0m    |[0;31m    int main()[0m{\n",temporary_listhead -> val);
-push(s,temporary_listhead->val);
-printf("           [0;33m%7d[0m    |        int p = 2;\n",s ->arr[s->top]);
-printf("           [0;33m%7d[0m    |        int i, isPrime;\n",s ->arr[s->top]);
-printf("           [0;33m%7d[0m    |[0;34m        while( p < 1000 )[0m{\n",s -> arr[s -> top] + temporary_listhead -> next -> val);
-temporary_listhead = temporary_listhead->next;
-push(s,temporary_listhead->val);
-printf("           [0;33m%7d[0m    |            isPrime = True;\n",s ->arr[s->top]);
-printf("           [0;33m%7d[0m    |            i = 2;\n",s ->arr[s->top]);
-printf("           [0;33m%7d[0m    |[0;34m            while( isPrime && i < p )[0m{\n",s -> arr[s -> top] + temporary_listhead -> next -> val);
-temporary_listhead = temporary_listhead->next;
-push(s,temporary_listhead->val);
-push(if_else_condition_stk,s -> arr[s ->  top]);
-temporary_listhead = temporary_listhead->next;
-printf("           [0;33m%7d[0m    |[0;34m                if(p %% i == 0)[0m{\n",if_else_condition_stk -> arr[if_else_condition_stk -> top]);
-push(s,temporary_listhead->val);
-printf("           [0;33m%7d[0m    |                    isPrime = False;\n",s ->arr[s->top]);
-printf("                      |                }\n");
-pop(s);
-pop(if_else_condition_stk);
-printf("           [0;33m%7d[0m    |                i = i + 1;\n",s ->arr[s->top]);
+listpop(profiler_listnode_stack);
+i=0;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = traversenext(3,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+listpush(profiler_listnode_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+while(i<n){
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+ps(str[i]);
+i++;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = profiler_listnode_stack-> arr[profiler_listnode_stack -> top];
+}
+listpop(profiler_listnode_stack);
+i=0;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+listpush(profiler_listnode_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2);
+while(i<n){
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val++;
+i++;
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = profiler_listnode_stack-> arr[profiler_listnode_stack -> top];
+}
+listpop(profiler_listnode_stack);
+free(profiler_listnode_stack);
+stk *profiler_stack = malloc(sizeof(stk));
+profiler_stack -> size = 10;
+profiler_stack -> top = -1;
+profiler_stack -> arr = (int*)malloc(sizeof(int)*profiler_stack-> size);
+stk *profiler_if_else_condition_stk = malloc(sizeof(stk));
+profiler_if_else_condition_stk -> size = 10;
+profiler_if_else_condition_stk -> top = -1;
+profiler_if_else_condition_stk -> arr = (int*)malloc(sizeof(int)*profiler_stack-> size);
+printf("\n");D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = j1EniQTv_r5J3qMC0BuhFist3C0BCEb[0];
+printf("           [0;33m%7d[0m    |[0;31m    void ps(char * s)[0m{\n",D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+printf("           [0;33m%7d[0m    |        int i=0;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |[0;34m        while(1)[0m{\n",profiler_stack -> arr[profiler_stack -> top] +D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next -> val);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+push(profiler_if_else_condition_stk,profiler_stack -> arr[profiler_stack ->  top]);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+;
+printf("           [0;33m%7d[0m    |[0;34m            if(s[i]=='\\0')[0m{\n",profiler_if_else_condition_stk -> arr[profiler_if_else_condition_stk -> top]);
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+printf("           [0;33m%7d[0m    |                return ;\n",profiler_stack ->arr[profiler_stack->top]);
 printf("                      |            }\n");
-pop(s);
-push(if_else_condition_stk,s -> arr[s ->  top]);
-temporary_listhead = temporary_listhead->next;
-printf("           [0;33m%7d[0m    |[0;34m            if(isPrime)[0m{\n",if_else_condition_stk -> arr[if_else_condition_stk -> top]);
-push(s,temporary_listhead->val);
-printf("           [0;33m%7d[0m    |                printf(\"%%d \", p);\n",s ->arr[s->top]);
-printf("                      |            }\n");
-pop(s);
-pop(if_else_condition_stk);
-printf("           [0;33m%7d[0m    |            p = p + 1;\n",s ->arr[s->top]);
+pop(profiler_stack);
+pop(profiler_if_else_condition_stk);
+printf("           [0;33m%7d[0m    |            i++;\n",profiler_stack ->arr[profiler_stack->top]);
 printf("                      |        }\n");
-pop(s);
-printf("           [0;33m%7d[0m    |        return 0;\n",s ->arr[s->top]);
+pop(profiler_stack);
 printf("                      |    }\n");
-pop(s);
-free(s);
-free(st);
-free(if_else_condition_stk);
+pop(profiler_stack);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = j1EniQTv_r5J3qMC0BuhFist3C0BCEb[1];
+printf("           [0;33m%7d[0m    |[0;31m    void rotate(char* str, int n)[0m{\n",D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+printf("           [0;33m%7d[0m    |        int i=0;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |        char tmp=str[0];\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |[0;34m        while(i<n-1)[0m{\n",profiler_stack -> arr[profiler_stack -> top] +D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next -> val);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+printf("           [0;33m%7d[0m    |            str[i]=str[i+1];\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |            i++;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |        }\n");
+pop(profiler_stack);
+printf("           [0;33m%7d[0m    |        str[n-2]=tmp;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |    }\n");
+pop(profiler_stack);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = j1EniQTv_r5J3qMC0BuhFist3C0BCEb[2];
+printf("           [0;33m%7d[0m    |[0;31m    int main()[0m{\n",D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+printf("           [0;33m%7d[0m    |        char c[]=\"this is some text@\";\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |        int n=sizeof(c);\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |        int i=0;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |        char str[n-1][n];\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |[0;34m        while(i<n-1)[0m{\n",profiler_stack -> arr[profiler_stack -> top] +D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next -> val);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+printf("           [0;33m%7d[0m    |            strcpy(str[i],c);\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |            ps(str[i]);\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |            rotate(c,n);\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |            i++;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |        }\n");
+pop(profiler_stack);
+printf("           [0;33m%7d[0m    |        char tmp[n];\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |[0;34m        while(i<=n)[0m{\n",profiler_stack -> arr[profiler_stack -> top] +D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next -> val);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+printf("           [0;33m%7d[0m    |            int j = i+1;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |[0;34m            while(j<=n)[0m{\n",profiler_stack -> arr[profiler_stack -> top] +D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next -> val);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+push(profiler_if_else_condition_stk,profiler_stack -> arr[profiler_stack ->  top]);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+;
+printf("           [0;33m%7d[0m    |[0;34m                if(strcmp(str[i],str[j])>0)[0m{\n",profiler_if_else_condition_stk -> arr[profiler_if_else_condition_stk -> top]);
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+printf("           [0;33m%7d[0m    |                    strcpy(tmp,str[i]);\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |                    strcpy(str[i],str[j]);\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |                    strcpy(str[j],tmp);\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |                }\n");
+pop(profiler_stack);
+pop(profiler_if_else_condition_stk);
+printf("           [0;33m%7d[0m    |                j++;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |            }\n");
+pop(profiler_stack);
+printf("           [0;33m%7d[0m    |            i++;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |        }\n");
+pop(profiler_stack);
+printf("           [0;33m%7d[0m    |        i=0;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |[0;34m        while(i<n)[0m{\n",profiler_stack -> arr[profiler_stack -> top] +D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next -> val);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+printf("           [0;33m%7d[0m    |            ps(str[i]);\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |            i++;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |        }\n");
+pop(profiler_stack);
+printf("           [0;33m%7d[0m    |        i=0;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |[0;34m        while(i<n)[0m{\n",profiler_stack -> arr[profiler_stack -> top] +D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next -> val);
+D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 = D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> next;
+push(profiler_stack,D820LPMlJ52FZ042SEU3FHTuZ3DWRF2 -> val);
+printf("           [0;33m%7d[0m    |            i++;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |        }\n");
+pop(profiler_stack);
+printf("           [0;33m%7d[0m    |        return 0;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |    }\n");
+pop(profiler_stack);
+free(profiler_stack);
+free(profiler_if_else_condition_stk);
 return 0;
 }

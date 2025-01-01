@@ -1,13 +1,5 @@
-#include"stdio.h"
-#include"stdlib.h"
-#include"string.h"
-#include"ctype.h"
-#include"stdbool.h"
-#include"unistd.h"
-#include"time.h"
+#include"new_code.h"
 
-extern char* my_variable;
- 
 typedef enum{
     START,
     STATEMENT,
@@ -29,6 +21,7 @@ typedef struct{
 typedef struct lexeroutput{
     Token **token;
     int token_size;
+    char **my_variable;
 }lexeroutput;
 
 typedef struct Node{
@@ -43,25 +36,9 @@ typedef struct parseoutput{
     int extra_size;
     Node **array_func;
     int func_index;
+    char **my_variable;
 }parseroutput;
-
-typedef struct ListNode{
-    struct ListNode *next;
-    unsigned int val;
-}ListNode;
-
-typedef struct stack{
-    int size;
-    int top;
-    int *arr;
-}stk;
-
-typedef struct liststack{
-    int size;
-    int top;
-    ListNode **arr;
-}liststk;
-
+    
 typedef struct trie_node{
     struct trie_node** list;
     bool is_end;
@@ -73,14 +50,6 @@ parseroutput *parser(lexeroutput *tokens);
 void printtree(Node *root);
 void code_generator(parseroutput* output);
 int givecount(Node *root);
-ListNode *makeNode();
-ListNode *makelist(int n);
-int pop(stk *s);
-void push(stk *s,int val);
-ListNode* listpop(liststk *s);
-void listpush(liststk *s,ListNode *nd);
-ListNode* traversenext(int n,ListNode* nd);
-void give_colour_box(int w,int h);
 trie_node* create_trie_node();  
 void insert_in_trie(trie_node* root,char* string);
 bool is_in_trie(trie_node* root,char* string);

@@ -20,8 +20,8 @@ stacklist.o: stacklist.c
 colour.o: colour.c
 	gcc -c colour.c -o colour.o
 
-header: prof.h
-	gcc prof.h
+header: prof.h new_code.h
+	gcc prof.h new_code.h
 
 clear:
 	rm *.o final

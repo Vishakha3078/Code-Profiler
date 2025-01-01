@@ -1,9 +1,10 @@
 #include"prof.h"
 
-bool one_statement_flag,in_function;
-char **variables;
-int variable_len = 15;
-int variable_index = 0;
+bool one_statement_flag,in_function;//one_statement flag used to know if given loop or conditional statement contains one statement
+                                    //in_function shows if pointer are in function
+char **variables;//array of own created variables 
+int variable_len = 15;//size of variables array
+int variable_index = 0;//index of variables array
 
 //print tokens
 void printtokens(Token *token){
@@ -37,46 +38,52 @@ void printtokens(Token *token){
     }        
 }
 
-void create_my_variable(){
+//creates unique variable by seeing user defined variables
+//output -> array of unique variables
+char** create_my_variable(){
     trie_node *root = create_trie_node();
     for (int i = 0;i < variable_index;i++)
         insert_in_trie(root,variables[i]);
     int array[]={97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,95,48,49,50,51,52,53,54,55,56,57};
     char *string = malloc(sizeof(char)*31);
-    int j;
-    int val;
-    do{
-        j = 0;
-        srand(time(NULL));
-        val = rand();
-        val = val%53;
-        string[j++] =(char)array[val]; 
-        for(int i = 1; i < 31; i++){
+    int j,val;
+    char **my_var = malloc(sizeof(char*)*2);
+    for (int k = 0; k < 2; k++){
+        do{
+            j = 0;
+            srand(time(NULL));
             val = rand();
-            val = val%63;
+            val = val%53;
             string[j++] =(char)array[val]; 
-        }
-        string[j] = 0;
-    }while(is_in_trie(root,string));
-    char* my_variable = malloc(sizeof(char)*33);
-    strcpy(my_variable,string);
-    return;
+            for(int i = 1; i < 31; i++){
+                val = rand();
+                val = val%63;
+                string[j++] =(char)array[val]; 
+            }
+            string[j] = 0;
+        }while(is_in_trie(root,string));
+        insert_in_trie(root,string);
+        my_var[k] = malloc(sizeof(char)*33);
+        strcpy(my_var[k],string);
+    }
+    return my_var;
 }
+
 //filter outs tabs,spaces,newlines
 void filterextras(char *current,int *index){
     while(current[*index] == 9 || current[*index] == 32 || current[*index] == 10 )
         *index = *index + 1;
     return;
 }
-//filter outs tabs,spaces,newlines
+
+//filter outs tabs,spaces,newlines,*
 void filter_variablename_extras(char *current,int *index){
     while(current[*index] == 9 || current[*index] == 32 || current[*index] == 10 || current[*index] == 42 )
         *index = *index + 1;
     return;
 }
 
-
-//for checking else if condition in code
+//for checking next word after else for 'else if' condition in code
 bool next_word(char *current,int *index){
     int temp = *index;
     char *newtype = malloc(sizeof(char)* 33);
@@ -97,7 +104,9 @@ bool next_word(char *current,int *index){
     }
 }
 
-//create pointers of token of headers 
+//create pointers of tokens of headers
+//input -> buffer array of code and current buffer array pointer
+//output -> token of header
 Token *create_lib(char *current,int *index){
     Token *token = malloc(sizeof(Token));
     int newsize = 10;
@@ -120,17 +129,21 @@ Token *create_lib(char *current,int *index){
     return token;
 }
 
+//add variable name in code in variables array
+//input -> variable to add
 void add_variable(char* var){
     if (variable_index >= variable_len){
             variable_len += 10;
             variables = realloc(variables,sizeof(char*)*variable_len);
-        }
+    }
     variables[variable_index] = malloc(sizeof(char)*strlen(var)+1);
     strcpy(variables[variable_index],var);
     variable_index = variable_index + 1;
     return;    
 }
 
+//parses variable names
+//input -> buffer array of code and current buffer array pointer
 void check_var(char *current,int *index){
     int j = 0;
     bool flg = 0;
@@ -138,15 +151,13 @@ void check_var(char *current,int *index){
     char *var = malloc(sizeof(char)*33);
     while(current[*index] != ';' && current[*index] != '('){
         if(current[*index] == ','){
-            var[j] = 0;
-            j = 0;
+            var[j] = 0,j = 0;
             add_variable(var);
            *index = *index + 1;
             filter_variablename_extras(current,index);
         }
         else if(current[*index] == '=' || current[*index] == '['){    
-            var[j] = 0;
-            j = 0;
+            var[j] = 0,j = 0;
             add_variable(var);
             *index = *index + 1;
             filter_variablename_extras(current,index);
@@ -171,6 +182,8 @@ void check_var(char *current,int *index){
     return;
 } 
 
+//add variables names redeclared by typedef
+//input -> buffer array of code and current buffer array pointer
 void check_redeclared_names(char* current,int *index){
     while(current[*index] != '}')
         *index = *index + 1;
@@ -180,6 +193,9 @@ void check_redeclared_names(char* current,int *index){
     return;
 }
 
+//check data types starting from 'short' data type
+//input -> buffer array of code and current buffer array pointer
+//output -> gives index of buffer array from where variable names starts
 int* short_type_variables(char *current,int *index){
     char *var = malloc(sizeof(char)*32);
     filter_variablename_extras(current,index);
@@ -199,7 +215,10 @@ int* short_type_variables(char *current,int *index){
         return index;
     }
 }
-   
+ 
+//check data types starting from 'long' data type
+//input -> buffer array of code and current buffer array pointer
+//output -> gives index of buffer array from where variable names starts  
 int* long_type_variables(char *current,int *index){
     char *var = malloc(sizeof(char)*32);
     filter_variablename_extras(current,index);
@@ -208,8 +227,7 @@ int* long_type_variables(char *current,int *index){
     while(isalpha(current[*index])||isdigit(current[*index])||current[*index] == 95){
         var[i] = current[*index];
     }  
-    var[i] = 0;
-    i = 0;
+    var[i] = 0,i = 0;
     if(!strcmp(var,"int")||!strcmp(var,"double")){
         filter_variablename_extras(current,index);
         return index;
@@ -221,8 +239,7 @@ int* long_type_variables(char *current,int *index){
             var[i] = current[*index];
             *index = *index + 1;
         }  
-        var[i] = 0;
-        i = 0;
+        var[i] = 0,i = 0;
         if(!strcmp(var,"int")){
             filter_variablename_extras(current,index);
             return index;
@@ -238,7 +255,9 @@ int* long_type_variables(char *current,int *index){
     }
 }
 
-
+//check data types starting from 'signed' and 'unsigned' data type
+//input -> buffer array of code and current buffer array pointer
+//output -> gives index of buffer array from where variable names starts
 int* signed_unsigned_type_variables(char *current,int *index){
     char *var = malloc(sizeof(char)*32);
     filter_variablename_extras(current,index);
@@ -248,8 +267,7 @@ int* signed_unsigned_type_variables(char *current,int *index){
         var[i] = current[*index];
         *index = *index + 1;
     }  
-    var[i] = 0;
-    i = 0;
+    var[i] = 0,i = 0;
     if(!strcmp(var,"int")||!strcmp(var,"char")||!strcmp(var,"short")||!strcmp(var,"long")){
         filter_variablename_extras(current,index);
         return index;
@@ -260,6 +278,8 @@ int* signed_unsigned_type_variables(char *current,int *index){
     }
 }
 
+//add parameters names in variables array
+//input -> array of parameters and its current index
 void add_parameters_name(char* newtype,int* j){
     char *var = malloc(sizeof(char)*32);
     int i = 0;
@@ -273,7 +293,10 @@ void add_parameters_name(char* newtype,int* j){
        *j = *j + 1;
     return;
 }
-//to handle the start and end of FUNCTIONs,LOOPs,CONDITIONAL_STATEMENTs
+
+//to handle the start and end of FUNCTIONs,LOOPs,CONDITIONAL_STATEMENTs checks if given string in paranthesis is condition or parameters
+//input -> buffer array of code and current buffer array pointer
+//output -> token pointer
 Token *check_braces(char *current,int *index){
     Token *token = malloc(sizeof(Token));
     stk *st = malloc(sizeof(stk));
@@ -336,11 +359,9 @@ Token *check_braces(char *current,int *index){
                     filterextras(newtype,&j);
                     if(newtype[j] == ')')
                         break;                
-                    while(isalpha(newtype[j])||isdigit(newtype[j])||newtype[j] == 95){
+                    while(isalpha(newtype[j])||isdigit(newtype[j])||newtype[j] == 95)
                         var[i++] = newtype[j++];
-                    }
-                    var[i]= 0;
-                    i = 0;
+                    var[i]= 0 ,i = 0;
                     if(!strcmp(var,"int")||!strcmp(var,"char")||!strcmp(var,"float")||!strcmp(var,"bool")||!strcmp(var,"_Bool")||!strcmp(var,"void")||!strcmp(var,"double")||!strcmp(var,"size_t")||!strcmp(var,"int8_t")||!strcmp(var,"uint8_t")||!strcmp(var,"int16_t")||!strcmp(var,"ptrdiff_t")){
                         filter_variablename_extras(newtype,&j);
                         if(newtype[j] == ')')
@@ -402,6 +423,8 @@ Token *check_braces(char *current,int *index){
 
 
 //check_type of token if its STATEMENT,LOOP,CONDITIONAL_STATEMENT,FUNCTION
+//input -> buffer array of code ,current buffer array pointer,user's file length and flag which tells if i have visited main or not
+//output -> token pointer
 Token *check_type(char *current,int *index,int length,bool *flag){
     Token *token = malloc(sizeof(Token));
     int newsize = 8;
@@ -453,23 +476,19 @@ Token *check_type(char *current,int *index,int length,bool *flag){
             filter_variablename_extras(current,index);
             check_var(current,index); 
         }
-        else if(!strcmp(newtype,"short")){
+        else if(!strcmp(newtype,"short"))
             check_var(current,short_type_variables(current,index));
-        }
-        else if(!strcmp(newtype,"long")){
+        else if(!strcmp(newtype,"long"))
             check_var(current,long_type_variables(current,index));
-        }
-        else if(!strcmp(newtype,"signed") || !strcmp(newtype,"unsigned")){
+        else if(!strcmp(newtype,"signed") || !strcmp(newtype,"unsigned"))
             check_var(current,signed_unsigned_type_variables(current,index));
-        }
         else if(!strcmp(newtype,"struct")){
             filterextras(current,index);
             while(isalpha(current[*index])||isdigit(current[*index])||current[*index] == 95){
                 var[i] = current[*index];
                 *index = *index + 1;
             }  
-            var[i] = 0;
-            i = 0;
+            var[i] = 0,i = 0;
             add_variable(var);
         }
         else if(!strcmp(newtype,"typedef")){
@@ -478,19 +497,16 @@ Token *check_type(char *current,int *index,int length,bool *flag){
                 var[i] = current[*index];
                 *index = *index + 1;
             }  
-            var[i] = 0;
-            i = 0;
+            var[i] = 0,i = 0;
             filter_variablename_extras(current,index);
-            if(current[*index] != '{'){
+            if(current[*index] != '{')
                 check_redeclared_names(current,index);     
-            }
             else if(!strcmp(var,"struct")){
                 while(isalpha(current[*index])||isdigit(current[*index])||current[*index] == 95){
                     var[i] = current[*index];
                     *index = *index + 1;
                 }  
-                var[i] = 0;
-                i = 0;
+                var[i] = 0,i = 0;
                 add_variable(var);
                 check_redeclared_names(current,index);
             }  
@@ -498,15 +514,12 @@ Token *check_type(char *current,int *index,int length,bool *flag){
             filter_variablename_extras(current,index);
             check_var(current,index); 
             }
-            else if(!strcmp(var,"short")){
+            else if(!strcmp(var,"short"))
                 check_var(current,short_type_variables(current,index));
-            }            
-            else if(!strcmp(var,"long")){
+            else if(!strcmp(var,"long"))
                 check_var(current,long_type_variables(current,index));
-            }
-            else if(!strcmp(var,"signed") || !strcmp(var,"unsigned")){
+            else if(!strcmp(var,"signed") || !strcmp(var,"unsigned"))
                 check_var(current,signed_unsigned_type_variables(current,index));
-            }
         }
         *index = ttmp;
         while(current[*index] != ';' && current[*index] != '('){
@@ -516,7 +529,7 @@ Token *check_type(char *current,int *index,int length,bool *flag){
             if(size >= newsize){
                 newsize += 8;
                 newtype = realloc(newtype,sizeof(char)*newsize);
-        }
+            }
         }
 
         if(current[*index] == ';'){
@@ -532,16 +545,13 @@ Token *check_type(char *current,int *index,int length,bool *flag){
      
         if(*flag != 1 && current[*index] == '('){
             int j = 0;
-            for(int i = size - 5; i < size + 1; i++){
-                temp[j] = newtype[i];
-                j++;
-            }
+            for(int i = size - 5; i < size + 1; i++)
+                temp[j] = newtype[i],j++;
         }
         if(strcmp(temp," main") == 0){
             token -> type = START;
             token -> value = newtype;
-            *flag = 1;
-            in_function = 1;
+            *flag = 1,in_function = 1;
         }
         else if(current[*index] == '('){
             token -> type = FUNCTION;
@@ -558,6 +568,8 @@ Token *check_type(char *current,int *index,int length,bool *flag){
 }
 
 //creates array of token pointers
+//input -> takes user's file pointer
+//output -> give structure containg array of token pointers ,it's size and pointer of array of my own created variables
 lexeroutput *lexer(FILE *fp){
     int token_number= 20;//size of token array
     int index = 0;//index of cuirrent array
@@ -596,8 +608,7 @@ lexeroutput *lexer(FILE *fp){
     tokens[token_index] = newtype;
     output -> token = tokens;
     output -> token_size = token_number;
-    create_my_variable();
-   /*printf(" ");*/
+    output -> my_variable = create_my_variable();
     //for(int i = 0; tokens[i]->type != END; i++)
      //   printtokens(tokens[i]);
     return output;
