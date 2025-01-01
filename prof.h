@@ -35,7 +35,7 @@ typedef struct parseoutput{
     Token *extras;
     int extra_size;
     Node **array_func;
-    int func_index;
+    int func_size;
     char **my_variable;
 }parseroutput;
     

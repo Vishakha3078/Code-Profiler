@@ -42,8 +42,10 @@ void printtokens(Token *token){
 //output -> array of unique variables
 char** create_my_variable(){
     trie_node *root = create_trie_node();
-    for (int i = 0;i < variable_index;i++)
+    for (int i = 0;i < variable_index;i++){
         insert_in_trie(root,variables[i]);
+        free(variables[i]);
+    }
     int array[]={97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,95,48,49,50,51,52,53,54,55,56,57};
     char *string = malloc(sizeof(char)*31);
     int j,val;
@@ -84,6 +86,8 @@ void filter_variablename_extras(char *current,int *index){
 }
 
 //for checking next word after else for 'else if' condition in code
+//input -> buffer array of code and current buffer array pointer
+//output -> true if its 'else if' condition either false
 bool next_word(char *current,int *index){
     int temp = *index;
     char *newtype = malloc(sizeof(char)* 33);
@@ -129,7 +133,7 @@ Token *create_lib(char *current,int *index){
     return token;
 }
 
-//add variable name in code in variables array
+//add variable name from code in variables array
 //input -> variable to add
 void add_variable(char* var){
     if (variable_index >= variable_len){
@@ -161,9 +165,8 @@ void check_var(char *current,int *index){
             add_variable(var);
             *index = *index + 1;
             filter_variablename_extras(current,index);
-            while(current[*index] != ',' && current[*index] != ';'){
+            while(current[*index] != ',' && current[*index] != ';')
                 *index = *index + 1;
-            }
             if(current[*index] == ';')
                 flg = 1,end_statement = *index;
             *index = *index + 1;
@@ -224,9 +227,8 @@ int* long_type_variables(char *current,int *index){
     filter_variablename_extras(current,index);
     int i = 0;
     int tmp = *index; 
-    while(isalpha(current[*index])||isdigit(current[*index])||current[*index] == 95){
+    while(isalpha(current[*index])||isdigit(current[*index])||current[*index] == 95)
         var[i] = current[*index];
-    }  
     var[i] = 0,i = 0;
     if(!strcmp(var,"int")||!strcmp(var,"double")){
         filter_variablename_extras(current,index);
@@ -299,7 +301,7 @@ void add_parameters_name(char* newtype,int* j){
 //output -> token pointer
 Token *check_braces(char *current,int *index){
     Token *token = malloc(sizeof(Token));
-    stk *st = malloc(sizeof(stk));
+    profiler_stk *st = malloc(sizeof(profiler_stk));
     st -> top = -1;
     st -> size = 10;
     st -> arr = (int*)malloc(sizeof(int)*st -> size);
@@ -307,15 +309,15 @@ Token *check_braces(char *current,int *index){
         int newsize = 10;
         int size = 0;
         char *newtype = malloc(sizeof(char)*newsize);
-        push(st,1);
+        profiler_push(st,1);
         newtype[size] = current[*index];
         *index = *index + 1;
         size++;
         while(st -> top != -1){
             if(current[*index] == ')')
-                pop(st);
+                profiler_pop(st);
             else if(current[*index] == '(')
-                push(st,1);
+                profiler_push(st,1);
             newtype[size] = current[*index];
             *index = *index + 1;
             size++;
@@ -422,8 +424,8 @@ Token *check_braces(char *current,int *index){
 }
 
 
-//check_type of token if its STATEMENT,LOOP,CONDITIONAL_STATEMENT,FUNCTION
-//input -> buffer array of code ,current buffer array pointer,user's file length and flag which tells if i have visited main or not
+//check type of token if its STATEMENT,LOOP,CONDITIONAL_STATEMENT,FUNCTION
+//input -> buffer array of code ,current buffer array pointer,user's file length and flag which tells if I have visited main or not
 //output -> token pointer
 Token *check_type(char *current,int *index,int length,bool *flag){
     Token *token = malloc(sizeof(Token));
@@ -511,8 +513,8 @@ Token *check_type(char *current,int *index,int length,bool *flag){
                 check_redeclared_names(current,index);
             }  
             else if(!strcmp(var,"int")||!strcmp(var,"char")||!strcmp(var,"float")||!strcmp(var,"bool")||!strcmp(var,"_Bool")||!strcmp(var,"void")||!strcmp(var,"double")||!strcmp(var,"size_t")||!strcmp(var,"int8_t")||!strcmp(var,"uint8_t")||!strcmp(var,"int16_t")||!strcmp(var,"ptrdiff_t")){
-            filter_variablename_extras(current,index);
-            check_var(current,index); 
+                filter_variablename_extras(current,index);
+                check_var(current,index); 
             }
             else if(!strcmp(var,"short"))
                 check_var(current,short_type_variables(current,index));
@@ -609,7 +611,7 @@ lexeroutput *lexer(FILE *fp){
     output -> token = tokens;
     output -> token_size = token_number;
     output -> my_variable = create_my_variable();
-    //for(int i = 0; tokens[i]->type != END; i++)
-     //   printtokens(tokens[i]);
+//    for(int i = 0; tokens[i]->type != END; i++)
+  //      printtokens(tokens[i]);
     return output;
 }     

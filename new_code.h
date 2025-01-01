@@ -7,28 +7,28 @@
 #include"time.h"
 
 
-typedef struct ListNode{
-    struct ListNode *next;
+typedef struct profiler_ListNode{
+    struct profiler_ListNode *next;
     unsigned int val;
-}ListNode;
+}profiler_ListNode;
 
-typedef struct stack{
+typedef struct profiler_stk{
     int size;
     int top;
     int *arr;
-}stk;
+}profiler_stk;
 
-typedef struct liststack{
+typedef struct profiler_liststk{
     int size;
     int top;
-    ListNode **arr;
-}liststk;
+    profiler_ListNode **arr;
+}profiler_liststk;
 
 
-ListNode *makeNode();
-ListNode *makelist(int n);
-int pop(stk *s);
-void push(stk *s,int val);
-ListNode* listpop(liststk *s);
-void listpush(liststk *s,ListNode *nd);
-ListNode* traversenext(int n,ListNode* nd);
+profiler_ListNode *profiler_makeNode();
+profiler_ListNode *profiler_makelist(int n);
+int profiler_pop(profiler_stk *s);
+void profiler_push(profiler_stk *s,int val);
+profiler_ListNode* profiler_listpop(profiler_liststk *s);
+void profiler_listpush(profiler_liststk *s,profiler_ListNode *nd);
+profiler_ListNode* profiler_traversenext(int n,profiler_ListNode* nd);

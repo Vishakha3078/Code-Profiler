@@ -1,16 +1,16 @@
 #include"prof.h"
-/*
 FILE *fp;
-char* curr_func_name;
-parseroutput *given_func;
-int if_else_index = 0;
-bool flag = 0;
+char* curr_func_name;//current function index of created array of lists of functions 
+parseroutput *given_func;//copy of output came from parser
+int if_else_index = 0;//
+bool flag = 0;//
 char *tabs = "    ";
 char c = (char)92;
 char n = 'n';
 char quotes = (char)34;
-char *my_unique_variable,*temporary_listhead,*temp_head_val,*temp_head_val_plus,*temp_head_next,*temp_head_traverse;
+char *my_unique_variable,*temporary_listhead,*temp_head_val,*temp_head_val_plus,*temp_head_next,*temp_head_traverse;//strings made to easy code insertion
 
+//concatenate two strings and returns it
 char* my_strcat(char* s1,char* s2){
     int n = strlen(s1);
     int m = strlen(s2);
@@ -21,6 +21,7 @@ char* my_strcat(char* s1,char* s2){
     return out;
 }
 
+//check if there is '%','\','"' in string and adds '\' or'%' before them for printing
 char* print_check(char* s){
     int len = strlen(s);
     int j = 1;
@@ -50,6 +51,7 @@ char* print_check(char* s){
     return str;
 }
 
+//for indentation
 char* increase_space(char *string1){
     char *string2 = "    ";
     int n = strlen(string1);
@@ -60,54 +62,43 @@ char* increase_space(char *string1){
     return res;
 }
 
+//for indentation
 char* decrease_space(char* string){
     int n = strlen(string);
     string[n-4] = '\0';
     return string;
 }
 
-char* remove_return_type(char *s){
-    int len = strlen(s);
-    int i = len - 1;
-    int j = 0;
-    while(*(s+i) != ' '){
-        i--;j++;
-    }
-    char *str = &s[len-j];
-    return str;
-}
-
-char* give_declaration(char* a){
-    return my_strcat(my_strcat("ListNode* ",a),"_cnt;\n");
-}
-
+//creating linked list for a function with size of required count_variable for that function 
 char* give_alloc(char* a,int count){
     char* tmp = malloc(10);
     sprintf(tmp, "%d",count);
-    char* cnt = my_strcat(a,my_strcat(my_strcat(" = makelist(",tmp),");\n"));
+    char* cnt = my_strcat(a,my_strcat(my_strcat(" = profiler_makelist(",tmp),");\n"));
     return cnt;
 }
 
+//for adding newline character 
 void addnewline(){
     char *newline = "\n";
     fwrite(newline,sizeof(char),1,fp); 
     return;
 }
 
+//for increasing count of given variable by one
 void addcount(){
-    char *str = my_strcat(temporary_listhead," -> val++;\n");
-    int len = strlen(str);
-    fwrite(str,sizeof(char),len,fp);
+    int len = strlen(temp_head_val_plus);
+    fwrite(temp_head_val_plus,sizeof(char),len,fp);
     return;    
 }
 
+//creating the array of linked list by own variable 
 void alloc_all_lists(){
     char* tmp = malloc(10);
-    sprintf(tmp, "%d",given_func -> func_index);
-    char *str = my_strcat(my_strcat(my_strcat(my_unique_variable, "=malloc(sizeof(ListNode*)*"),tmp),");\n");
+    sprintf(tmp, "%d",given_func -> func_size);
+    char *str = my_strcat(my_strcat(my_strcat(my_unique_variable, "=malloc(sizeof(profiler_ListNode*)*"),tmp),");\n");
     int len = strlen(str);
     fwrite(str,sizeof(char),len,fp);
-    for(int i= 0; i < given_func -> func_index; i++){
+    for(int i= 0; i < given_func -> func_size; i++){
         sprintf(tmp,"%d",i);
         str = give_alloc(my_strcat(my_strcat(my_strcat(my_unique_variable,"["),tmp),"]"),givecount(given_func->array_func[i]));
         len = strlen(str);
@@ -116,6 +107,9 @@ void alloc_all_lists(){
     return;
 }
 
+
+//inserting code for printing output of each statement and its count
+//input -> AST root pointer of function,loop or conditional statement
 void function_count(Node *root){
     char *str;
     int j = 1;
@@ -138,12 +132,12 @@ void function_count(Node *root){
     fwrite(&n,sizeof(char),1,fp);     
     fwrite(&quotes,sizeof(char),1,fp);
     if(root -> type == START || root -> type == FUNCTION || !strcmp(root ->value,"else")){
-        str = my_strcat(",",my_strcat(my_strcat(temp_head_val,");\npush(profiler_stack,"),my_strcat(temp_head_val,");\n"))); 
+        str = my_strcat(",",my_strcat(my_strcat(temp_head_val,");\nprofiler_push(profiler_stack,"),my_strcat(temp_head_val,");\n"))); 
     }
     else if(root -> type == CONDITIONAL_STATEMENT)
-        str = my_strcat(my_strcat(",profiler_if_else_condition_stk -> arr[profiler_if_else_condition_stk -> top]);\npush(profiler_stack,",temp_head_val),");\n");
+        str = my_strcat(my_strcat(",profiler_if_else_condition_stk -> arr[profiler_if_else_condition_stk -> top]);\nprofiler_push(profiler_stack,",temp_head_val),");\n");
     else{
-            str = my_strcat(",profiler_stack -> arr[profiler_stack -> top] +",my_strcat(my_strcat(my_strcat(temporary_listhead," -> next -> val);\n"),temp_head_next),my_strcat(my_strcat("push(profiler_stack,",temp_head_val),");\n"))); 
+            str = my_strcat(",profiler_stack -> arr[profiler_stack -> top] +",my_strcat(my_strcat(my_strcat(temporary_listhead," -> next -> val);\n"),temp_head_next),my_strcat(my_strcat("profiler_push(profiler_stack,",temp_head_val),");\n"))); 
     }
     
     len = strlen(str);
@@ -177,9 +171,9 @@ void function_count(Node *root){
         }
         else{
             if(!strcmp(root->ptr[j]->ptr[i]->value,"if"))
-                str = my_strcat(my_strcat("push(profiler_if_else_condition_stk,profiler_stack -> arr[profiler_stack ->  top]);\n",temp_head_next),";\n");
+                str = my_strcat(my_strcat("profiler_push(profiler_if_else_condition_stk,profiler_stack -> arr[profiler_stack ->  top]);\n",temp_head_next),";\n");
             else if(!strcmp(root->ptr[j]->ptr[i]->value,"else if"))
-                str = my_strcat(my_strcat("push(profiler_if_else_condition_stk,pop(profiler_if_else_condition_stk) - (",temp_head_val),my_strcat(");\n",temp_head_next));
+                str = my_strcat(my_strcat("profiler_push(profiler_if_else_condition_stk,profiler_pop(profiler_if_else_condition_stk) - (",temp_head_val),my_strcat(");\n",temp_head_next));
             else
                 str = temp_head_next;
             len = strlen(str);
@@ -187,7 +181,7 @@ void function_count(Node *root){
             function_count(root -> ptr[j] -> ptr[i]);
             if(i+1 < root -> ptr[j] -> ptrsize){
             if(strcmp(root->ptr[j]->ptr[i+1]->value,"else if")){
-                str = "pop(profiler_if_else_condition_stk);\n";
+                str = "profiler_pop(profiler_if_else_condition_stk);\n";
                 len = strlen(str);
                 fwrite(str,sizeof(char),len,fp);
             }
@@ -205,14 +199,15 @@ void function_count(Node *root){
     fwrite(&c,sizeof(char),1,fp);
     fwrite(&n,sizeof(char),1,fp);
     fwrite(&quotes,sizeof(char),1,fp);
-    str = ");\npop(profiler_stack);\n"; 
+    str = ");\nprofiler_pop(profiler_stack);\n"; 
     len = strlen(str);
     fwrite(str,sizeof(char),len,fp);
     return;
 }
 
+//inserting code for printing the output having user code and each statment count
 void printcounts(){
-    char *str = "free(profiler_listnode_stack);\nstk *profiler_stack = malloc(sizeof(stk));\nprofiler_stack -> size = 10;\nprofiler_stack -> top = -1;\nprofiler_stack -> arr = (int*)malloc(sizeof(int)*profiler_stack-> size);\nstk *profiler_if_else_condition_stk = malloc(sizeof(stk));\nprofiler_if_else_condition_stk -> size = 10;\nprofiler_if_else_condition_stk -> top = -1;\nprofiler_if_else_condition_stk -> arr = (int*)malloc(sizeof(int)*profiler_stack-> size);\n";
+    char *str = "free(profiler_listnode_stack);\nprofiler_stk *profiler_stack = malloc(sizeof(profiler_stk));\nprofiler_stack -> size = 10;\nprofiler_stack -> top = -1;\nprofiler_stack -> arr = (int*)malloc(sizeof(int)*profiler_stack-> size);\nprofiler_stk *profiler_if_else_condition_stk = malloc(sizeof(profiler_stk));\nprofiler_if_else_condition_stk -> size = 10;\nprofiler_if_else_condition_stk -> top = -1;\nprofiler_if_else_condition_stk -> arr = (int*)malloc(sizeof(int)*profiler_stack-> size);\n";
     int len = strlen(str);
     fwrite(str,sizeof(char),len,fp);    
     str = "printf(";
@@ -225,7 +220,7 @@ void printcounts(){
     str = ");";
     len = strlen(str);
     fwrite(str,sizeof(char),len,fp);    
-    for(int i = 0; i < given_func -> func_index; i++){
+    for(int i = 0; i < given_func -> func_size; i++){
         char* tmp = malloc(10);
         sprintf(tmp,"%d",i);
         char *print_func_name = my_strcat(my_strcat(my_strcat(my_unique_variable,"["),tmp),"];\n");
@@ -240,8 +235,11 @@ void printcounts(){
     return ;
 }
 
+//inserting count_variables 
+//input -> AST root pointer of function,loop or conditional statement
+//output -> count of total variables required in that function,loop or conditional statement
 int write_func(Node *root){
-    stk *st = malloc(sizeof(stk));
+    profiler_stk *st = malloc(sizeof(profiler_stk));
     st -> arr = (int*)malloc(sizeof(int)*st-> size);
     st -> size = 10;
     st -> top = -1;
@@ -262,7 +260,7 @@ int write_func(Node *root){
         addcount();
     else if(root -> type == CONDITIONAL_STATEMENT){
         if_else_index++;
-        str = my_strcat(my_strcat("listpush(profiler_listnode_stack,",temporary_listhead),");\n");
+        str = my_strcat(my_strcat("profiler_listpush(profiler_listnode_stack,",temporary_listhead),");\n");
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
         char* tmp = malloc(10);
@@ -275,14 +273,14 @@ int write_func(Node *root){
     else{
         if(root -> type == START)
             alloc_all_lists();
-        str = my_strcat(my_strcat("ListNode *",temporary_listhead),";\n");
+        str = my_strcat(my_strcat("profiler_ListNode *",temporary_listhead),";\n");
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
         str = my_strcat(temporary_listhead,my_strcat(" = ",curr_func_name)); 
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
         addcount();
-        str = "liststk *profiler_listnode_stack = malloc(sizeof(struct liststack));\nprofiler_listnode_stack -> size = 10;\nprofiler_listnode_stack -> top = -1;\nprofiler_listnode_stack -> arr = (ListNode**)malloc(sizeof(ListNode*)*profiler_listnode_stack-> size);\n";
+        str = "profiler_liststk *profiler_listnode_stack = malloc(sizeof(struct profiler_liststk));\nprofiler_listnode_stack -> size = 10;\nprofiler_listnode_stack -> top = -1;\nprofiler_listnode_stack -> arr = (profiler_ListNode**)malloc(sizeof(profiler_ListNode*)*profiler_listnode_stack-> size);\n";
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);    
     }
@@ -307,24 +305,24 @@ int write_func(Node *root){
             if(st -> top == -1 && tot_index != 0){
                 char* tmp = malloc(10);
                 sprintf(tmp, "%d",tot_index+1);
-                str = my_strcat(my_strcat(my_strcat(temp_head_traverse,tmp),","),my_strcat(my_strcat(temporary_listhead,");\nlistpush(profiler_listnode_stack,"),my_strcat(temporary_listhead,");\n")));
+                str = my_strcat(my_strcat(my_strcat(temp_head_traverse,tmp),","),my_strcat(my_strcat(temporary_listhead,");\nprofiler_listpush(profiler_listnode_stack,"),my_strcat(temporary_listhead,");\n")));
                 len = strlen(str);
                 fwrite(str,sizeof(char),len,fp);
-                push(st,tot_index+1);
+                profiler_push(st,tot_index+1);
                 val += tot_index;
                 tot_index = 0;
             }
             else{
-                str = my_strcat(temp_head_next,my_strcat(my_strcat("listpush(profiler_listnode_stack,",temporary_listhead),");\n"));
+                str = my_strcat(temp_head_next,my_strcat(my_strcat("profiler_listpush(profiler_listnode_stack,",temporary_listhead),");\n"));
                 len = strlen(str);
                 fwrite(str,sizeof(char),len,fp);
-                push(st,1);
+                profiler_push(st,1);
             }
             tot_index++;
             tot_index += write_func(root -> ptr[i] -> ptr[j]);
             tot_index--;
             val++;
-            pop(st);
+            profiler_pop(st);
         }
         else{
             if(flag != 1 && st -> top != -1)
@@ -348,12 +346,12 @@ int write_func(Node *root){
         }}
       }
     if(root -> type == CONDITIONAL_STATEMENT){
-        str = my_strcat(temporary_listhead," = listpop(profiler_listnode_stack);\n}\n");
+        str = my_strcat(temporary_listhead," = profiler_listpop(profiler_listnode_stack);\n}\n");
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
     }
     else if(root -> type == LOOP){
-        str = my_strcat(temporary_listhead," = profiler_listnode_stack-> arr[profiler_listnode_stack -> top];\n}\nlistpop(profiler_listnode_stack);\n");
+        str = my_strcat(temporary_listhead," = profiler_listnode_stack-> arr[profiler_listnode_stack -> top];\n}\nprofiler_listpop(profiler_listnode_stack);\n");
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
         flag = 0;
@@ -366,6 +364,8 @@ int write_func(Node *root){
     free(st);
 }
    
+//generating new code by users code
+//input -> output given by parser
 void code_generator(parseroutput* output){
     fp = fopen("my_code.c","w");
     given_func = output;
@@ -374,7 +374,7 @@ void code_generator(parseroutput* output){
     temp_head_next = my_strcat(my_strcat(temporary_listhead," = "),my_strcat(temporary_listhead," -> next;\n"));
     temp_head_val = my_strcat(temporary_listhead," -> val");
     temp_head_val_plus = my_strcat(temporary_listhead," -> val++;\n");
-    temp_head_traverse = my_strcat(temporary_listhead," = traversenext(");
+    temp_head_traverse = my_strcat(temporary_listhead," = profiler_traversenext(");
     char *str = "#include";
     char quotes = (char)34;
     int len = strlen(str);
@@ -398,11 +398,11 @@ void code_generator(parseroutput* output){
         }
         addnewline();
     }
-    str = my_strcat(my_strcat( "ListNode** ",my_unique_variable),";\n");
+    str = my_strcat(my_strcat( "profiler_ListNode** ",my_unique_variable),";\n");//declaring array of linked list pointers by own variable
     len = strlen(str);
     fwrite(str,sizeof(char),len,fp);
 
-    for(int i = 0; i < output -> func_index; i++){
+    for(int i = 0; i < output -> func_size; i++){
         char* tmp = malloc(10);
         sprintf(tmp,"%d",i);
         curr_func_name = my_strcat(my_strcat(my_strcat(my_unique_variable,"["),tmp),"];\n");
@@ -411,4 +411,4 @@ void code_generator(parseroutput* output){
     fclose(fp);
     return;
 }
-*/
+
