@@ -2,8 +2,8 @@
 FILE *fp;
 char* curr_func_name;//current function index of created array of lists of functions 
 parseroutput *given_func;//copy of output came from parser
-int if_else_index = 0;//
-bool flag = 0;//
+int if_else_index = 0;//for counting the number of contionuos if-else statements
+bool flag = 0;//tells if comes out of loop or conditional_statements
 char *tabs = "    ";
 char c = (char)92;
 char n = 'n';

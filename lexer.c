@@ -2,9 +2,7 @@
 
 bool one_statement_flag,in_function;//one_statement flag used to know if given loop or conditional statement contains one statement
                                     //in_function shows if pointer are in function
-char **variables;//array of own created variables 
-int variable_len = 15;//size of variables array
-int variable_index = 0;//index of variables array
+trie_node *root;//trie data structre to store user defined variables
 
 //print tokens
 void printtokens(Token *token){
@@ -41,11 +39,6 @@ void printtokens(Token *token){
 //creates unique variable by seeing user defined variables
 //output -> array of unique variables
 char** create_my_variable(){
-    trie_node *root = create_trie_node();
-    for (int i = 0;i < variable_index;i++){
-        insert_in_trie(root,variables[i]);
-        free(variables[i]);
-    }
     int array[]={97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,95,48,49,50,51,52,53,54,55,56,57};
     char *string = malloc(sizeof(char)*31);
     int j,val;
@@ -71,14 +64,14 @@ char** create_my_variable(){
     return my_var;
 }
 
-//filter outs tabs,spaces,newlines
+//filter outs tabs,spaces,newlines for checking whole code
 void filterextras(char *current,int *index){
     while(current[*index] == 9 || current[*index] == 32 || current[*index] == 10 )
         *index = *index + 1;
     return;
 }
 
-//filter outs tabs,spaces,newlines,*
+//filter outs tabs,spaces,newlines,* for cheching parameters
 void filter_variablename_extras(char *current,int *index){
     while(current[*index] == 9 || current[*index] == 32 || current[*index] == 10 || current[*index] == 42 )
         *index = *index + 1;
@@ -133,19 +126,6 @@ Token *create_lib(char *current,int *index){
     return token;
 }
 
-//add variable name from code in variables array
-//input -> variable to add
-void add_variable(char* var){
-    if (variable_index >= variable_len){
-            variable_len += 10;
-            variables = realloc(variables,sizeof(char*)*variable_len);
-    }
-    variables[variable_index] = malloc(sizeof(char)*strlen(var)+1);
-    strcpy(variables[variable_index],var);
-    variable_index = variable_index + 1;
-    return;    
-}
-
 //parses variable names
 //input -> buffer array of code and current buffer array pointer
 void check_var(char *current,int *index){
@@ -156,13 +136,13 @@ void check_var(char *current,int *index){
     while(current[*index] != ';' && current[*index] != '('){
         if(current[*index] == ','){
             var[j] = 0,j = 0;
-            add_variable(var);
+            insert_in_trie(root,var);
            *index = *index + 1;
             filter_variablename_extras(current,index);
         }
         else if(current[*index] == '=' || current[*index] == '['){    
             var[j] = 0,j = 0;
-            add_variable(var);
+            insert_in_trie(root,var);
             *index = *index + 1;
             filter_variablename_extras(current,index);
             while(current[*index] != ',' && current[*index] != ';')
@@ -180,7 +160,7 @@ void check_var(char *current,int *index){
     }
     if(flg != 1){
         var[j] = 0;
-        add_variable(var);
+        insert_in_trie(root,var);
     }
     return;
 } 
@@ -290,7 +270,7 @@ void add_parameters_name(char* newtype,int* j){
         *j = *j + 1;
     }  
     var[i] = 0;
-    add_variable(var);
+    insert_in_trie(root,var);
     while(newtype[*j] != ',' && newtype[*j] != ')')
        *j = *j + 1;
     return;
@@ -491,7 +471,7 @@ Token *check_type(char *current,int *index,int length,bool *flag){
                 *index = *index + 1;
             }  
             var[i] = 0,i = 0;
-            add_variable(var);
+            insert_in_trie(root,var);
         }
         else if(!strcmp(newtype,"typedef")){
             filterextras(current,index);
@@ -509,7 +489,7 @@ Token *check_type(char *current,int *index,int length,bool *flag){
                     *index = *index + 1;
                 }  
                 var[i] = 0,i = 0;
-                add_variable(var);
+                insert_in_trie(root,var);
                 check_redeclared_names(current,index);
             }  
             else if(!strcmp(var,"int")||!strcmp(var,"char")||!strcmp(var,"float")||!strcmp(var,"bool")||!strcmp(var,"_Bool")||!strcmp(var,"void")||!strcmp(var,"double")||!strcmp(var,"size_t")||!strcmp(var,"int8_t")||!strcmp(var,"uint8_t")||!strcmp(var,"int16_t")||!strcmp(var,"ptrdiff_t")){
@@ -575,7 +555,7 @@ Token *check_type(char *current,int *index,int length,bool *flag){
 lexeroutput *lexer(FILE *fp){
     int token_number= 20;//size of token array
     int index = 0;//index of cuirrent array
-    bool flag = 0; 
+    bool flag = 0;
     fseek(fp,0,SEEK_END);
     int length = ftell(fp);
     fseek(fp,0,SEEK_SET);
@@ -585,7 +565,7 @@ lexeroutput *lexer(FILE *fp){
     lexeroutput *output = malloc(sizeof(lexeroutput));
     Token **tokens = malloc(sizeof(Token*) * token_number);
     int token_index = 0;//current token
-    variables = malloc(sizeof(char*)*variable_len);
+    root= create_trie_node();
     while(index < length){
         if(current[index] == '#'){
             tokens[token_index] = create_lib(current,&index);
