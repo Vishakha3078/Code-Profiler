@@ -102,7 +102,8 @@ void create_tree(Token **tokens,int *token_num,Node *root,Node **ptr,int *ptrsiz
     *token_num = *token_num + 1;
 }
 
-parseroutput* parser(Token **tokens){
+parseroutput* parser(lexeroutput *toks){
+    Token **tokens = toks -> token; 
     int token_num = 0;
     Token *extras =(Token*) malloc(sizeof(Token));
     int extra_size = 0;
@@ -137,7 +138,11 @@ parseroutput* parser(Token **tokens){
                 array_func = realloc(array_func,sizeof(Node*)*(func_index+1));
             }
         }
-   }
+    }
+    for(int i =  0; i < toks -> token_size; i++){
+        free(toks -> token[i]);
+    }
+   // printf("i am here\n");
  /* for (int i = 0; i < extra_size; i++)
         printf("%s\n",extras[i].value);
     for (int i = 0; i < func_index; i++){

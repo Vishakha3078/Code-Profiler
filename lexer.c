@@ -232,7 +232,7 @@ Token *check_type(char *current,int *index,int length,bool *flag){
 }
 
 
-Token **lexer(FILE *fp){
+lexeroutput *lexer(FILE *fp){
     int token_number= 20;//size of token array
     int index = 0;//index of cuirrent array
     bool flag = 0; 
@@ -242,6 +242,7 @@ Token **lexer(FILE *fp){
     char *current = malloc(sizeof(char)*length);
     fread(current,1,length,fp);
     fclose(fp);
+    lexeroutput *output = malloc(sizeof(lexeroutput));
     Token **tokens = malloc(sizeof(Token*) * token_number);
     int token_index = 0;//current token
 
@@ -267,8 +268,10 @@ Token **lexer(FILE *fp){
     newtype ->type = END;
     newtype ->value = "\0";
     tokens[token_index] = newtype;
-
+    output -> token = tokens;
+    output -> token_size = token_number;
+    printf("%s"," ");
   // for(int i = 0; tokens[i]->type != END; i++)
     //   printtokens(tokens[i]);
-    return tokens;
+    return output;
 }

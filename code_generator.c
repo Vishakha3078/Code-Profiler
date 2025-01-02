@@ -236,7 +236,7 @@ int write_func(Node *root){
     else{
         if(root -> type == START)
             alloc_all_lists();
-        str = "ListNode *temporary_listhead;\nListNode *temp;\n";
+        str = "ListNode *temporary_listhead;\n";
         len = strlen(str);
         fwrite(str,sizeof(char),len,fp);
         str = my_strcat(my_strcat("temporary_listhead = ",curr_func_name),";\n"); 
