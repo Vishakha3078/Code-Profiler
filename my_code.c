@@ -1,75 +1,104 @@
-#include"prof.h"
+#include"new_code.h"
 #include<stdio.h>
-ListNode* main_cnt;
+#define True 1
+#define False 0
+profiler_ListNode** WLDmZ0bV9CrXcFzEJDCGA_mgeCAAgkr;
 int main(){
-main_cnt = makelist(3);
-ListNode *temporary_listhead;
-temporary_listhead = main_cnt;
-temporary_listhead -> val++;
-liststk *st = malloc(sizeof(struct liststack));
-st -> size = 10;
-st -> top = -1;
-st -> arr = (ListNode**)malloc(sizeof(ListNode*)*st-> size);
-int arr[] = {9,7,6,5,4,3,2,1};
-int n = 8;
-int temp,i,j;
-i = 1;
-temporary_listhead = temporary_listhead -> next;
-listpush(st,temporary_listhead);
-while(i < n){
-temporary_listhead -> val++;
-temp = arr[i];
-j = i-1;
-temporary_listhead = temporary_listhead -> next;
-listpush(st,temporary_listhead);
-while( j >= 0 && arr[j] > temp){
-temporary_listhead -> val++;
-arr[j+1] = arr[j];
-j--;
-temporary_listhead = st-> arr[st -> top];
+WLDmZ0bV9CrXcFzEJDCGA_mgeCAAgkr=malloc(sizeof(profiler_ListNode*)*1);
+WLDmZ0bV9CrXcFzEJDCGA_mgeCAAgkr[0] = profiler_makelist(5);
+profiler_ListNode *cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1;
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = WLDmZ0bV9CrXcFzEJDCGA_mgeCAAgkr[0];
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> val++;
+profiler_liststk *profiler_listnode_stack = malloc(sizeof(struct profiler_liststk));
+profiler_listnode_stack -> size = 10;
+profiler_listnode_stack -> top = -1;
+profiler_listnode_stack -> arr = (profiler_ListNode**)malloc(sizeof(profiler_ListNode*)*profiler_listnode_stack-> size);
+int p = 2;
+int i, isPrime;
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> next;
+profiler_listpush(profiler_listnode_stack,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1);
+while( p < 1000 ){
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> val++;
+isPrime = True;
+i = 2;
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> next;
+profiler_listpush(profiler_listnode_stack,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1);
+while( isPrime && i < p ){
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> val++;
+if(p % i == 0){
+profiler_listpush(profiler_listnode_stack,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1);
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = profiler_traversenext(1,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1);
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> val++;
+isPrime = False;
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = profiler_listpop(profiler_listnode_stack);
 }
-listpop(st);
-arr[j+1] = temp;
-i++;
-temporary_listhead = st-> arr[st -> top];
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = profiler_traversenext(1,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1);
+i = i + 1;
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = profiler_listnode_stack-> arr[profiler_listnode_stack -> top];
 }
-listpop(st);
-stk *s = malloc(sizeof(stk));
-s -> size = 10;
-s -> top = -1;
-s -> arr = (int*)malloc(sizeof(int)*s-> size);
-stk *if_else_condition_stk = malloc(sizeof(stk));
-if_else_condition_stk -> size = 10;
-if_else_condition_stk -> top = -1;
-if_else_condition_stk -> arr = (int*)malloc(sizeof(int)*s-> size);
-temporary_listhead = main_cnt;
-printf("    %7d    ->        int main(){\n",temporary_listhead -> val);
-push(s,temporary_listhead->val);
-printf("    %7d    ->            int arr[] = {9,7,6,5,4,3,2,1};\n",s ->arr[s->top]);
-printf("    %7d    ->            int n = 8;\n",s ->arr[s->top]);
-printf("    %7d    ->            int temp,i,j;\n",s ->arr[s->top]);
-printf("    %7d    ->            i = 1;\n",s ->arr[s->top]);
-printf("    %7d    ->            while(i < n){\n",temporary_listhead -> next -> val + 1);
-temporary_listhead = temporary_listhead->next;
-push(s,temporary_listhead->val);
-printf("    %7d    ->                temp = arr[i];\n",s ->arr[s->top]);
-printf("    %7d    ->                j = i-1;\n",s ->arr[s->top]);
-printf("    %7d    ->                while( j >= 0 && arr[j] > temp){\n",s -> arr[s -> top] + temporary_listhead -> next -> val);
-temporary_listhead = temporary_listhead->next;
-push(s,temporary_listhead->val);
-printf("    %7d    ->                    arr[j+1] = arr[j];\n",s ->arr[s->top]);
-printf("    %7d    ->                    j--;\n",s ->arr[s->top]);
-printf("                                 }\n");
-pop(s);
-printf("    %7d    ->                arr[j+1] = temp;\n",s ->arr[s->top]);
-printf("    %7d    ->                i++;\n",s ->arr[s->top]);
-printf("                             }\n");
-pop(s);
-printf("    %7d    ->            return 0;\n",s ->arr[s->top]);
-printf("                         }\n");
-pop(s);
-free(s);
-free(st);
-free(if_else_condition_stk);
+profiler_listpop(profiler_listnode_stack);
+if(isPrime){
+profiler_listpush(profiler_listnode_stack,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1);
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = profiler_traversenext(2,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1);
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> val++;
+printf("%d ", p);
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = profiler_listpop(profiler_listnode_stack);
+}
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = profiler_traversenext(2,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1);
+p = p + 1;
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = profiler_listnode_stack-> arr[profiler_listnode_stack -> top];
+}
+profiler_listpop(profiler_listnode_stack);
+free(profiler_listnode_stack);
+profiler_stk *profiler_stack = malloc(sizeof(profiler_stk));
+profiler_stack -> size = 10;
+profiler_stack -> top = -1;
+profiler_stack -> arr = (int*)malloc(sizeof(int)*profiler_stack-> size);
+profiler_stk *profiler_if_else_condition_stk = malloc(sizeof(profiler_stk));
+profiler_if_else_condition_stk -> size = 10;
+profiler_if_else_condition_stk -> top = -1;
+profiler_if_else_condition_stk -> arr = (int*)malloc(sizeof(int)*profiler_stack-> size);
+printf("\n");cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = WLDmZ0bV9CrXcFzEJDCGA_mgeCAAgkr[0];
+printf("           [0;33m%7d[0m    |[0;31m    int main()[0m{\n",cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> val);
+profiler_push(profiler_stack,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> val);
+printf("           [0;33m%7d[0m    |        int p = 2;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |        int i, isPrime;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |[0;34m        while( p < 1000 )[0m{\n",profiler_stack -> arr[profiler_stack -> top] +cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> next -> val);
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> next;
+profiler_push(profiler_stack,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> val);
+printf("           [0;33m%7d[0m    |            isPrime = True;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |            i = 2;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("           [0;33m%7d[0m    |[0;34m            while( isPrime && i < p )[0m{\n",profiler_stack -> arr[profiler_stack -> top] +cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> next -> val);
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> next;
+profiler_push(profiler_stack,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> val);
+profiler_push(profiler_if_else_condition_stk,profiler_stack -> arr[profiler_stack ->  top]);
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> next;
+;
+printf("           [0;33m%7d[0m    |[0;34m                if(p %% i == 0)[0m{\n",profiler_if_else_condition_stk -> arr[profiler_if_else_condition_stk -> top]);
+profiler_push(profiler_stack,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> val);
+printf("           [0;33m%7d[0m    |                    isPrime = False;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |                }\n");
+profiler_pop(profiler_stack);
+profiler_pop(profiler_if_else_condition_stk);
+printf("           [0;33m%7d[0m    |                i = i + 1;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |            }\n");
+profiler_pop(profiler_stack);
+profiler_push(profiler_if_else_condition_stk,profiler_stack -> arr[profiler_stack ->  top]);
+cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 = cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> next;
+;
+printf("           [0;33m%7d[0m    |[0;34m            if(isPrime)[0m{\n",profiler_if_else_condition_stk -> arr[profiler_if_else_condition_stk -> top]);
+profiler_push(profiler_stack,cQcT_kJ6vbEzaIqzH_t6jDa8DouyFU1 -> val);
+printf("           [0;33m%7d[0m    |                printf(\"%%d \", p);\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |            }\n");
+profiler_pop(profiler_stack);
+profiler_pop(profiler_if_else_condition_stk);
+printf("           [0;33m%7d[0m    |            p = p + 1;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |        }\n");
+profiler_pop(profiler_stack);
+printf("           [0;33m%7d[0m    |        return 0;\n",profiler_stack ->arr[profiler_stack->top]);
+printf("                      |    }\n");
+profiler_pop(profiler_stack);
+free(profiler_stack);
+free(profiler_if_else_condition_stk);
 return 0;
 }

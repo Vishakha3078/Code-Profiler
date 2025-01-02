@@ -1,0 +1,77 @@
+
+#Overview:
+    This project is a Code Profiler written in C. It is designed to analyze user-provided code, identify user-defined variables, and insert unique variables where needed for profiling. The profiler is specifically designed to handle while loops andif-else conditions,counting the number of times each statement executes and providing a detailed analysis.
+
+#The profiler works by:
+    Lexical Analysis: Tokenizing the input code into an array of tokens.
+    Variable Identification: Searching for user-defined variables and generating unique variables for profiling.
+    Parsing: Creating an Abstract Syntax Tree (AST) from the token array.
+    Code Generation: Modifying the input code to insert profiling statements, printing the output code, and providing a statement count.
+
+#Workflow:
+1. Lexer
+    Tokenizes the user-provided code into a structured token array.
+    Identifies user-defined variables and adds them to an own variables array (excluding reserved variable names).
+2. Parser
+    Takes the token array and own variables array as input.
+    Constructs an Abstract Syntax Tree (AST), where each node contains:
+        Token Type
+        Token Value
+        Child Node Array Pointer
+        Children Array Size
+    Creates additional structures:
+        Function Headers
+        Function Declarations Array
+        Own Variables Array
+3. Code Generator
+    Takes the AST and supporting structures as input.
+    Inserts profiling statements into the code by using unique variables from the own variables array ensuring variable uniqueness to avoid conflicts.
+    Outputs the modified code.
+    Prints a count of each statement executed during profiling.
+    
+#Reserved Variables:
+    Users cannot define variables matching the following function names used to define functions needed in created code:
+        profiler_stk
+        profiler_liststk
+        profiler_ListNode
+        profiler_pop
+        profiler_push
+        profiler_listpop
+        profiler_listpush
+        profiler_makeNode
+        profiler_makelist
+        profiler_traversenext
+        profiler_stack
+        profiler_listnode_stack
+        profiler_if_else_condition_stk
+
+#Usage:
+    Input your C code via the terminal.
+    The profiler will tokenize and analyze your code.
+    Code statements and their counts will be displayed.
+    
+#Limitations:
+    Does not support profiling for enum and union data types,global variables.
+    Does not support profiling for break,continue,switch statements,for loop. 
+    Reserved variable names must not be used in the user's code.
+
+#Future Enhancements
+    Add support for enum and union.
+    Add support for global variables.
+    Add support for break,continue,switch statements,for loops.
+    Enhance visualization of statement counts.
+    
+Contributions and feedback are welcome!
+
+
+
+
+
+
+
+
+
+
+
+
+?

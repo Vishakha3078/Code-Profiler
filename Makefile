@@ -1,6 +1,6 @@
 all:run
-final: main.o lexer.o parser.o code_generator.o stacklist.o
-	gcc main.o lexer.o parser.o code_generator.o stacklist.o -o final
+final: main.o lexer.o parser.o code_generator.o stacklist.o trie.o
+	gcc main.o lexer.o parser.o code_generator.o stacklist.o trie.o -o final
 
 main.o: main.c
 	gcc -c main.c -o main.o
@@ -17,8 +17,11 @@ code_generator.o: code_generator.c
 stacklist.o: stacklist.c
 	gcc -c stacklist.c -o stacklist.o
 
-header: prof.h
-	gcc prof.h
+colour.o: colour.c
+	gcc -c colour.c -o colour.o
+
+header: prof.h new_code.h
+	gcc prof.h new_code.h
 
 clear:
 	rm *.o final
