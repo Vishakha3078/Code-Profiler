@@ -107,7 +107,6 @@ void alloc_all_lists(){
     return;
 }
 
-
 //inserting code for printing output of each statement and its count
 //input -> AST root pointer of function,loop or conditional statement
 void function_count(Node *root){
